@@ -723,10 +723,13 @@ The self-contained Lean~4.16.0 formalization \leanid{Paper1\_RadicalPair.lean} (
 \item \textbf{\leanid{StrongNoiseAsymptotics4C} (15 spectral resolvent, Mittag--Leffler ratio, and reduced Feshbach--Schur theorems, lines 4801--5991):} \leanid{lorentz\_resolvent\_identity}, \leanid{laplacePS\_expansion}, \leanid{laplaceRem\_bounds}, \leanid{markov\_contrast\_two\_sided}, \leanid{markov\_xi5\_envelope}, \leanid{markov\_sign\_flip\_guarantee}, \leanid{sign\_flip\_blind\_spot\_witness}, \leanid{ml\_half\_vs\_markov\_xi9\_2}, \leanid{ml\_separation\_general}, \leanid{schur\_complement\_2x2}, \leanid{std\_zeno\_M2\_cancel}, \leanid{std\_zeno\_two\_sided\_xi2}, \leanid{local\_iso\_dark\_xi4}, \leanid{local\_z\_leak\_xi1}, \leanid{local\_z\_single\_sat\_xi0}.
 \end{enumerate}
 
-\textbf{Reproducibility Commands:} From the unzipped submission archive root:
+{\def\UrlBreaks{\do\/\do-}\textbf{Code \& Data Repository and Reproducibility Commands:} All numerical datasets, Python scripts, figure generators, and the pure Lean~4.16.0 formalization are openly archived at \url{https://github.com/Mehardeep-Singh-GG/radical-pair-commutator-protection} (release \texttt{v1.0.0}). From the repository root (or unzipped submission archive):}
 {\small
 \begin{verbatim}
-cd lean_proofs && lake build DiamondProofs.Paper1_RadicalPair
+git clone https://github.com/Mehardeep-Singh-GG/radical-pair-commutator-protection.git
+cd radical-pair-commutator-protection
+cd lean_proofs && lake build DiamondProofs.Paper1_RadicalPair && cd ..
+python3 scripts/ci_audit.py
 python3 src/verify_01_hamiltonians_and_moments.py
 python3 src/verify_02_five_channel_liouville.py
 python3 src/verify_03_microscopic_ado_and_mc.py
@@ -734,7 +737,7 @@ python3 src/verify_04_curves_and_tables.py
 python3 src/verify_05_supplement_checks.py
 python3 src/verify_06_fad50uT_colored_and_dipolar.py
 python3 src/generate_figures.py
-tectonic paper1_radical_pair.tex && tectonic supplement_paper1.tex
+cd manuscript && tectonic paper1_radical_pair.tex && tectonic supplement_paper1.tex
 \end{verbatim}
 }
 
