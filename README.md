@@ -5,11 +5,11 @@
 [![Zero Sorry](https://img.shields.io/badge/sorry%20%7C%20custom%20axioms-0-brightgreen.svg)](lean_proofs/axioms_check.txt)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](requirements.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Target Journal](https://img.shields.io/badge/Manuscript-J.%20Chem.%20Phys.-005A9C.svg)](manuscript/paper1_radical_pair.pdf)
+[![Manuscript](https://img.shields.io/badge/Manuscript-PDF-005A9C.svg)](manuscript/paper1_radical_pair.pdf)
 
-Official research repository containing the **pure Lean 4.16.0 formal proofs**, **45-digit arbitrary-precision Liouvillian solvers**, **Prony Auxiliary Density Operator (ADO) and exact integrated-OU Monte Carlo simulations**, **strict RFC-8259 datasets**, **vector figures**, and **RevTeX 4-2 manuscript & Supplemental Material** for:
+Official research repository containing the **pure Lean 4.16.0 formal proofs**, **45-digit arbitrary-precision Liouvillian solvers**, **Prony Auxiliary Density Operator (ADO) and exact integrated-OU Monte Carlo simulations**, **strict RFC-8259 datasets**, **vector figures**, and **journal-agnostic LaTeX manuscript & Supplemental Material** for:
 
-> **Mehardeep Singh**, *"Fourth-Moment Commutator Protection, Five-Channel Liouvillian Scaling, and Non-Commuting Colored-Bath Dynamics in Radical-Pair Magnetoreception"*, Sri Chaitanya Educational Institutions (submitted to *The Journal of Chemical Physics*).
+> **Mehardeep Singh**, *"Fourth-Moment Commutator Protection, Five-Channel Liouvillian Scaling, and Non-Commuting Colored-Bath Dynamics in Radical-Pair Magnetoreception"*, Sri Chaitanya Educational Institutions.
 
 ---
 
@@ -82,8 +82,8 @@ radical-pair-commutator-protection/
 ├── data/                              # 8 verified strict RFC-8259 JSON & CSV datasets
 ├── figures/                           # Figures 1–4 (vector PDF + high-DPI PNG)
 ├── manuscript/
-│   ├── paper1_radical_pair.tex/.pdf   # Main manuscript (RevTeX 4-2, aip,jcp,reprint; 15 pages)
-│   └── supplement_paper1.tex/.pdf     # Supplemental Material (complete proofs & tables; 14 pages)
+│   ├── paper1_radical_pair.tex/.pdf   # Main manuscript (journal-agnostic preprint; 15 pages)
+│   └── supplement_paper1.tex/.pdf     # Supplemental Material (complete proofs & tables; 13 pages)
 └── scripts/
     └── ci_audit.py                    # End-to-end Lean + RFC-8259 JSON + Python verifier
 ```
@@ -143,12 +143,12 @@ tectonic supplement_paper1.tex
 If you use this code, dataset, or Lean 4 formalization, please cite the accompanying manuscript (see also [`CITATION.cff`](CITATION.cff)):
 
 ```bibtex
-@article{Singh2026RadicalPair,
+@misc{Singh2026RadicalPair,
   author  = {Singh, Mehardeep},
   title   = {Fourth-Moment Commutator Protection, Five-Channel Liouvillian Scaling,
              and Non-Commuting Colored-Bath Dynamics in Radical-Pair Magnetoreception},
-  journal = {Submitted to The Journal of Chemical Physics},
   year    = {2026},
+  note    = {Manuscript, numerical dataset, and pure Lean 4.16.0 formalization},
   url     = {https://github.com/Mehardeep-Singh-GG/radical-pair-commutator-protection}
 }
 ```
