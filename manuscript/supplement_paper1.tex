@@ -1,0 +1,741 @@
+\documentclass[aip,jcp,onecolumn,10pt,notitlepage,amsmath,amssymb,floatfix]{revtex4-2}
+
+\usepackage[T1]{fontenc}
+\usepackage{amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=blue!55!black,urlcolor=blue!55!black]{hyperref}
+
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thesubsection}{S\arabic{section}.\arabic{subsection}}
+\renewcommand{\theequation}{S\arabic{equation}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\ee}{\mathrm{e}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\ad}{\operatorname{ad}}
+\newcommand{\PS}{P_S}
+\newcommand{\PT}{P_T}
+\newcommand{\HRP}{H_{\mathrm{RP}}}
+\newcommand{\HZ}{H_Z}
+\newcommand{\HHF}{H_{\mathrm{HF}}}
+\newcommand{\Hex}{H_{\mathrm{ex}}}
+\newcommand{\Hdip}{H_{\mathrm{dip}}}
+\newcommand{\Hint}{H_{\mathrm{int}}}
+\newcommand{\DeltaPhi}{\Delta\Phi_S}
+\newcommand{\xiflip}{\xi_{\mathrm{flip}}}
+\newcommand{\leanid}[1]{{\footnotesize\ttfamily\def\_{\textunderscore\allowbreak}#1}}
+
+\begin{document}
+\setlength{\emergencystretch}{1.8em}
+
+\title{Supplemental Material for:\texorpdfstring{\\}{ }%
+Fourth-Moment Commutator Protection, Five-Channel Liouvillian Scaling,\texorpdfstring{\\}{ }%
+and Non-Commuting Colored-Bath Dynamics in Radical-Pair Magnetoreception}
+
+\author{Mehardeep Singh}
+\email{mehardeep.sim@gmail.com}
+\affiliation{Sri Chaitanya Educational Institutions}
+
+\date{}
+
+\begin{abstract}
+This Supplemental Material provides complete, self-contained mathematical derivations, extended arbitrary-precision numerical datasets, Prony/NNLS bath parameters, Auxiliary Density Operator (ADO) convergence audits, and the complete pure Lean~4.16.0 formal verification ledger accompanying the main article. Section~\ref{sec:S1} gives the full operator-algebra and antiunitary time-reversal proofs of Theorems~1 and~2 for arbitrary $K$-nucleus spin architectures with arbitrary attachment $e_k \in \{1,2\}$, isotropic exchange $J_{\mathrm{ex}}$, and arbitrary real symmetric electron--electron dipolar tensors $\mathbf{D}^\top = \mathbf{D}$. Section~\ref{sec:S2} proves the exact commuting resolvent expansion, the two-sided $\Theta(\xi^{-5})$ Markov envelope, the Sign-Flip Blind Spot theorem, and the Mittag--Leffler $\Theta(\xi^{5-\mu})$ separation, accompanied by full 50-digit Laplace-vs.-quadrature validation tables. Section~\ref{sec:S3} details the Feshbach--Schur dark-manifold reductions for all five Markovian scaling classes ($\alpha \in \{5, 2, 4, 1, 0\}$)---including exact analytic coefficients for the Channel~2 dark-triplet iterate ($+4.51208\,\xi^{-2}$) and Channel~3 four-bright-step Schur cascade ($-0.163885\,\xi^{-4}$)---derives the closed-form single-radical uniaxial $S_{1z}$ saturation formula, and verifies native 45-digit asymmetric Haberkorn trace conservation ($\max|\Phi_S+\Phi_T-1|\le 8.2\times 10^{-43}$). Section~\ref{sec:S4} records all $K=8$ positive Prony parameters, Tanimura--Kubo ADO equations and convergence audits, full Protocol~A/B/C tables (including matched single-mode Ornstein--Uhlenbeck benchmarks and static 3D Gaussian quadrature), and the exact integrated-OU SU(2) Strang-split pure-state unraveling used for $36\times 36$ $50\,\mu\text{T}$ $\mathrm{FAD}^{\bullet-}\text{--}\mathrm{Z}^{\bullet}$. Section~\ref{sec:S5} documents extended 45-digit pre-asymptotic crossover tables up to $\xi = 3\times 10^6$ and $35^\circ$-tilted point-dipole checks ($r = 1.870\,\text{nm}$, $d(r)=+50.0\,\text{rad}\,\mu\text{s}^{-1}$, $D_{\mathrm{ZFS}}=-75.0\,\text{rad}\,\mu\text{s}^{-1}$). Section~\ref{sec:S6} lists the complete Lean~4.16.0 theorem ledger (364 authored public theorems, 501 authored total, 560 kernel-audited public declarations, 69 headline theorems) and exact reproduction protocol.
+\end{abstract}
+
+\maketitle
+\tableofcontents
+
+%==============================================================================
+\section{Complete Operator-Algebra and Time-Reversal Proofs of Theorems 1 and 2}
+\label{sec:S1}
+%==============================================================================
+
+\subsection{Electronic Singlet--Triplet Algebra and Symmetrized Dipolar Operators}
+\label{subsec:S1_elec}
+
+Let $\mathcal{H}_e := \mathbb{C}^2 \otimes \mathbb{C}^2$ be the four-dimensional two-electron spin space with Pauli matrices $\sigma_1 = \sigma_x, \sigma_2 = \sigma_y, \sigma_3 = \sigma_z$ and spin-$1/2$ operators $S_{1\alpha} = \frac{1}{2}\sigma_\alpha \otimes \mathbb{I}_2$, $S_{2\alpha} = \frac{1}{2}\mathbb{I}_2 \otimes \sigma_\alpha$ ($\alpha \in \{1,2,3\}$). They satisfy the canonical $\mathfrak{su}(2)$ relations
+\begin{equation}
+\label{eq:S1_su2}
+[S_{e\alpha}, S_{e'\beta}] = \ii\,\delta_{ee'}\sum_{\gamma=1}^3 \epsilon_{\alpha\beta\gamma} S_{e\gamma}, \qquad
+S_{e\alpha} S_{e\beta} = \frac{1}{4}\delta_{\alpha\beta}\mathbb{I}_4 + \frac{\ii}{2}\sum_{\gamma=1}^3 \epsilon_{\alpha\beta\gamma} S_{e\gamma},
+\end{equation}
+for $e, e' \in \{1,2\}$. Define the singlet and triplet projectors on $\mathcal{H}_e$:
+\begin{equation}
+\label{eq:S1_proj}
+P_{S,4} := \frac{1}{4}\mathbb{I}_4 - \mathbf{S}_1 \cdot \mathbf{S}_2, \qquad
+P_{T,4} := \frac{3}{4}\mathbb{I}_4 + \mathbf{S}_1 \cdot \mathbf{S}_2 = \mathbb{I}_4 - P_{S,4}.
+\end{equation}
+In the orthonormal singlet--triplet basis
+\begin{equation}
+\label{eq:S1_st_basis}
+|S\rangle = \frac{|\uparrow\downarrow\rangle - |\downarrow\uparrow\rangle}{\sqrt{2}}, \quad
+|T_+\rangle = |\uparrow\uparrow\rangle, \quad
+|T_0\rangle = \frac{|\uparrow\downarrow\rangle + |\downarrow\uparrow\rangle}{\sqrt{2}}, \quad
+|T_-\rangle = |\downarrow\downarrow\rangle,
+\end{equation}
+we have $\mathbf{S}_1 \cdot \mathbf{S}_2 |S\rangle = -\frac{3}{4}|S\rangle$ and $\mathbf{S}_1 \cdot \mathbf{S}_2 |T_m\rangle = +\frac{1}{4}|T_m\rangle$ ($m \in \{+,0,-\}$). Thus $P_{S,4} = |S\rangle\langle S|$ and $P_{T,4} = \sum_m |T_m\rangle\langle T_m|$ immediately satisfy $P_{S,4}^2 = P_{S,4}$, $P_{T,4}^2 = P_{T,4}$, $P_{S,4}P_{T,4} = 0$, $P_{S,4}^\dagger = P_{S,4}$, $\Tr_e(P_{S,4}) = 1$, and $\Tr_e(P_{T,4}) = 3$.
+
+Let $Z_\alpha := S_{1\alpha} + S_{2\alpha}$ be the total electronic spin components and define the singlet--triplet commutator basis operators
+\begin{equation}
+\label{eq:S1_Valpha}
+V_\alpha := [S_{1\alpha}, P_{S,4}], \qquad \alpha \in \{1,2,3\}.
+\end{equation}
+
+\begin{lemma}[Fundamental Four-Dimensional Electronic Commutator and Trace Identities]
+\label{lem:S1_elec_identities}
+For all $\alpha, \beta, \gamma \in \{1,2,3\}$:
+\begin{enumerate}[label=(\roman*),leftmargin=1.8em,itemsep=2pt]
+\item $[Z_\alpha, P_{S,4}] = 0$, so $[S_{2\alpha}, P_{S,4}] = -V_\alpha$.
+\item $V_\alpha = \ii(\mathbf{S}_1 \times \mathbf{S}_2)_\alpha = \ii\sum_{\mu,\nu}\epsilon_{\alpha\mu\nu} S_{1\mu} S_{2\nu}$, $V_\alpha^\dagger = -V_\alpha$, and $\Tr_e(V_\alpha^\dagger V_\beta) = \frac{1}{2}\delta_{\alpha\beta}$.
+\item $[Z_\gamma, V_\alpha] = \ii\sum_{\eta=1}^3 \epsilon_{\gamma\alpha\eta} V_\eta$.
+\item Defining the symmetrized electron--electron bilinear operator $D^{(s)}_{\alpha\beta} := \frac{1}{2}(S_{1\alpha}S_{2\beta} + S_{1\beta}S_{2\alpha})$, we have $[D^{(s)}_{\alpha\beta}, P_{S,4}] = 0$ and $\Tr_e\bigl(V_\delta^\dagger [D^{(s)}_{\alpha\beta}, V_\gamma]\bigr) = 0$ for every $\alpha,\beta,\gamma,\delta \in \{1,2,3\}$.
+\item For any real symmetric $3\times 3$ matrix $\mathbf{D}^\top = \mathbf{D}$, the raw dipolar operator $H_{\mathrm{dip},4} := \sum_{\alpha,\beta=1}^3 D_{\alpha\beta} S_{1\alpha} S_{2\beta}$ equals $\sum_{\alpha,\beta=1}^3 D_{\alpha\beta} D^{(s)}_{\alpha\beta}$ and therefore satisfies $[H_{\mathrm{dip},4}, P_{S,4}] = 0$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) Using Eq.~\eqref{eq:S1_su2},
+\begin{align*}
+[S_{1\alpha}, \mathbf{S}_1 \cdot \mathbf{S}_2]
+&= \sum_{\beta=1}^3 [S_{1\alpha}, S_{1\beta}] S_{2\beta}
+= \ii \sum_{\beta,\gamma=1}^3 \epsilon_{\alpha\beta\gamma} S_{1\gamma} S_{2\beta}
+= -\ii(\mathbf{S}_1 \times \mathbf{S}_2)_\alpha, \\
+[S_{2\alpha}, \mathbf{S}_1 \cdot \mathbf{S}_2]
+&= \sum_{\beta=1}^3 S_{1\beta} [S_{2\alpha}, S_{2\beta}]
+= \ii \sum_{\beta,\gamma=1}^3 \epsilon_{\alpha\beta\gamma} S_{1\beta} S_{2\gamma}
+= +\ii(\mathbf{S}_1 \times \mathbf{S}_2)_\alpha.
+\end{align*}
+Summing gives $[Z_\alpha, \mathbf{S}_1\cdot\mathbf{S}_2] = 0$, hence $[Z_\alpha, P_{S,4}] = 0$ and $[S_{2\alpha}, P_{S,4}] = -[S_{1\alpha}, P_{S,4}] = -V_\alpha$.
+
+(ii) Since $P_{S,4} = \frac{1}{4}\mathbb{I}_4 - \mathbf{S}_1\cdot\mathbf{S}_2$, the first line above yields $V_\alpha = -[S_{1\alpha}, \mathbf{S}_1\cdot\mathbf{S}_2] = \ii(\mathbf{S}_1\times\mathbf{S}_2)_\alpha$. Because $S_{1\alpha}$ and $P_{S,4}$ are Hermitian, $V_\alpha^\dagger = (S_{1\alpha}P_{S,4} - P_{S,4}S_{1\alpha})^\dagger = P_{S,4}S_{1\alpha} - S_{1\alpha}P_{S,4} = -V_\alpha$. Using $\Tr(\sigma_\mu \sigma_\nu) = 2\delta_{\mu\nu}$ on each factor of $\mathbb{C}^2 \otimes \mathbb{C}^2$:
+\begin{align*}
+\Tr_e(V_\alpha^\dagger V_\beta)
+&= \sum_{\mu,\nu,\mu',\nu'} \epsilon_{\alpha\mu\nu}\epsilon_{\beta\mu'\nu'} \Tr_1(S_{1\mu}S_{1\mu'})\Tr_2(S_{2\nu}S_{2\nu'}) \\
+&= \sum_{\mu,\nu,\mu',\nu'} \epsilon_{\alpha\mu\nu}\epsilon_{\beta\mu'\nu'} \left(\frac{1}{2}\delta_{\mu\mu'}\right)\left(\frac{1}{2}\delta_{\nu\nu'}\right)
+= \frac{1}{4}\sum_{\mu,\nu}\epsilon_{\alpha\mu\nu}\epsilon_{\beta\mu\nu}
+= \frac{1}{4}(2\delta_{\alpha\beta}) = \frac{1}{2}\delta_{\alpha\beta}.
+\end{align*}
+
+(iii) By the Jacobi identity and $[Z_\gamma, P_{S,4}] = 0$,
+\[
+[Z_\gamma, V_\alpha] = [Z_\gamma, [S_{1\alpha}, P_{S,4}]]
+= [[Z_\gamma, S_{1\alpha}], P_{S,4}] + [S_{1\alpha}, [Z_\gamma, P_{S,4}]]
+= \Big[\ii\sum_\eta \epsilon_{\gamma\alpha\eta} S_{1\eta}, P_{S,4}\Big]
+= \ii\sum_{\eta=1}^3 \epsilon_{\gamma\alpha\eta} V_\eta.
+\]
+
+(iv) Let $\mathcal{F}_{12}$ be the electron-exchange swap operator ($\mathcal{F}_{12}|\psi\rangle\otimes|\phi\rangle = |\phi\rangle\otimes|\psi\rangle$), which satisfies $\mathcal{F}_{12} = 2\mathbf{S}_1\cdot\mathbf{S}_2 + \frac{1}{2}\mathbb{I}_4 = \mathbb{I}_4 - 2P_{S,4}$. Because $\mathcal{F}_{12} S_{1\alpha}\mathcal{F}_{12} = S_{2\alpha}$ and $\mathcal{F}_{12} S_{2\beta}\mathcal{F}_{12} = S_{1\beta}$, and because $S_{1\beta}$ commutes with $S_{2\alpha}$, every symmetrized bilinear satisfies
+\[
+\mathcal{F}_{12} D^{(s)}_{\alpha\beta} \mathcal{F}_{12}
+= \frac{1}{2}(S_{2\alpha}S_{1\beta} + S_{2\beta}S_{1\alpha})
+= \frac{1}{2}(S_{1\beta}S_{2\alpha} + S_{1\alpha}S_{2\beta})
+= D^{(s)}_{\alpha\beta}.
+\]
+Thus $[D^{(s)}_{\alpha\beta}, \mathcal{F}_{12}] = 0$, which implies $[D^{(s)}_{\alpha\beta}, P_{S,4}] = -\frac{1}{2}[D^{(s)}_{\alpha\beta}, \mathcal{F}_{12}] = 0$. Furthermore, because $D^{(s)}_{\alpha\beta}$ is Hermitian and $T$-even while $V_\gamma$ is anti-Hermitian and $T$-even, $[D^{(s)}_{\alpha\beta}, V_\gamma]$ is Hermitian and $T$-even, whereas $V_\delta^\dagger = -V_\delta$ is anti-Hermitian and $T$-even (and $[D^{(s)}_{\alpha\beta}, V_\gamma] = \frac{\ii}{2}\sum_\mu (\epsilon_{\alpha\gamma\mu}S_{1\mu}S_{2\beta} + \dots)$ is symmetric under electron exchange modulo $T$-parity), yielding $\Tr_e(V_\delta^\dagger [D^{(s)}_{\alpha\beta}, V_\gamma]) = 0$ identically. (In Lean~4, all $3^4 = 81$ index combinations $(\alpha,\beta,\gamma,\delta)$ are independently certified entry-by-entry in \leanid{comm\_SymDip4\_PS4} and \leanid{v4\_orthog\_SymDip4}.)
+
+(v) Re-indexing $\alpha \leftrightarrow \beta$ and applying $D_{\beta\alpha} = D_{\alpha\beta}$ gives
+\[
+H_{\mathrm{dip},4}
+= \frac{1}{2}\sum_{\alpha,\beta} D_{\alpha\beta} S_{1\alpha} S_{2\beta} + \frac{1}{2}\sum_{\alpha,\beta} D_{\beta\alpha} S_{1\beta} S_{2\alpha}
+= \sum_{\alpha,\beta} D_{\alpha\beta} D^{(s)}_{\alpha\beta},
+\]
+so $[H_{\mathrm{dip},4}, P_{S,4}] = \sum_{\alpha,\beta} D_{\alpha\beta} [D^{(s)}_{\alpha\beta}, P_{S,4}] = 0$ identically.
+\end{proof}
+
+\subsection{Arbitrary \texorpdfstring{$K$}{K}-Nucleus Tensor Space and Proof of Theorem 1}
+\label{subsec:S1_thm1}
+
+Let $\mathcal{H}_{\mathrm{nuc}} := \bigotimes_{k=1}^K \mathbb{C}^{d_k}$ with $d_k = 2I_k + 1$, $d_I = \prod_{k=1}^K d_k$, and total dimension $D = 4d_I$. Every electronic operator $E \in \mathcal{B}(\mathcal{H}_e)$ lifts to $E \otimes \mathbb{I}_{d_I}$, while nuclear spin operator $I_{k,\beta}$ acts on factor $k$ and as identity on all other nuclear factors. Standard $\mathfrak{su}(2)$ spin-$I_k$ traces satisfy
+\begin{equation}
+\label{eq:S1_nuc_trace}
+\frac{1}{d_I}\Tr_{\mathrm{nuc}}(I_{k,\beta}) = 0, \qquad
+\frac{1}{d_I}\Tr_{\mathrm{nuc}}(I_{k,\beta} I_{k',\beta'}) = \delta_{kk'}\,\delta_{\beta\beta'}\,\frac{I_k(I_k+1)}{3}.
+\end{equation}
+Notice that for $k \neq k'$, the nuclear trace factorizes as $\frac{1}{d_k}\Tr_k(I_{k,\beta}) \cdot \frac{1}{d_{k'}}\Tr_{k'}(I_{k',\beta'}) = 0 \cdot 0 = 0$; for $k = k'$, $\Tr_k(I_{k,\beta} I_{k,\beta'}) = \delta_{\beta\beta'}\Tr_k(I_{k,z}^2) = \delta_{\beta\beta'}\sum_{m=-I_k}^{I_k} m^2 = \delta_{\beta\beta'}\frac{I_k(I_k+1)(2I_k+1)}{3}$.
+
+\begin{proof}[Complete Proof of Theorem~1 (Main Text)]
+Let $\PS = P_{S,4} \otimes \mathbb{I}_{d_I}$. Because $\HZ(\hat{\mathbf{b}}) = \omega_L \sum_\alpha b_\alpha (Z_\alpha \otimes \mathbb{I}_{d_I})$, $\Hex = J_{\mathrm{ex}}(2P_{S,4} - \mathbb{I}_4)\otimes \mathbb{I}_{d_I}$, and $\Hdip = H_{\mathrm{dip},4} \otimes \mathbb{I}_{d_I}$ all act trivially on $\mathcal{H}_{\mathrm{nuc}}$, Lemma~\ref{lem:S1_elec_identities}(i),(v) immediately yield
+\[
+[\HZ(\hat{\mathbf{b}}), \PS] = [\Hex, \PS] = [\Hdip, \PS] = 0.
+\]
+Hence the first nested commutator depends solely on hyperfine couplings:
+\begin{equation}
+\label{eq:S1_C1}
+C_1 := [\HRP(\hat{\mathbf{b}}), \PS] = [\HHF, \PS]
+= \sum_{k=1}^K \sum_{\alpha,\beta=1}^3 A^{(k)}_{\alpha\beta}\,\sigma_{e_k}\,(V_\alpha \otimes I_{k,\beta}),
+\end{equation}
+where $\sigma_1 = +1$ (attachment to electron~1) and $\sigma_2 = -1$ (attachment to electron~2, by Lemma~\ref{lem:S1_elec_identities}(i)).
+
+For $M_0$, $M_0(\hat{\mathbf{b}}) = \frac{1}{d_I}\Tr(\PS^2) = \frac{1}{d_I}\Tr_e(P_{S,4})\Tr_{\mathrm{nuc}}(\mathbb{I}_{d_I}) = \frac{1}{d_I}\cdot 1 \cdot d_I = 1$.
+For $M_2$, substituting Eq.~\eqref{eq:S1_C1} into $M_2 = \frac{1}{d_I}\Tr(C_1^\dagger C_1)$ and applying $\Tr(E\otimes N) = \Tr_e(E)\Tr_{\mathrm{nuc}}(N)$, Lemma~\ref{lem:S1_elec_identities}(ii), and Eq.~\eqref{eq:S1_nuc_trace}:
+\begin{align}
+M_2(\hat{\mathbf{b}})
+&= \frac{1}{d_I}\sum_{k,k'=1}^K \sum_{\alpha,\beta,\alpha',\beta'=1}^3
+A^{(k)}_{\alpha\beta} A^{(k')}_{\alpha'\beta'} \sigma_{e_k}\sigma_{e_{k'}}
+\Tr_e(V_\alpha^\dagger V_{\alpha'}) \Tr_{\mathrm{nuc}}(I_{k,\beta} I_{k',\beta'}) \nonumber \\
+&= \sum_{k=1}^K \sum_{\alpha,\beta=1}^3 \big(A^{(k)}_{\alpha\beta}\big)^2 \sigma_{e_k}^2 \cdot \frac{1}{2} \cdot \frac{I_k(I_k+1)}{3}
+= \sum_{k=1}^K \frac{I_k(I_k+1)}{6}\Tr\big(\mathbf{A}_k \mathbf{A}_k^\top\big).
+\label{eq:S1_M2_proof}
+\end{align}
+Because $\sigma_{e_k}^2 = (\pm 1)^2 = 1$, $M_2$ is strictly independent of $\omega_L$, $\hat{\mathbf{b}}$, $J_{\mathrm{ex}}$, $\mathbf{D}$, and the attachment assignments $\{e_k\}$.
+\end{proof}
+
+\subsection{Complete Antiunitary Time-Reversal Orthogonality Proof of Theorem 2}
+\label{subsec:S1_thm2}
+
+Split $\HRP(\hat{\mathbf{b}}) = \HZ(\hat{\mathbf{b}}) + \Hint$ with $\Hint := \HHF + \Hex + \Hdip$. Then
+\begin{equation}
+\label{eq:S1_C2_split}
+C_2(\hat{\mathbf{b}}) := [\HRP(\hat{\mathbf{b}}), C_1] = C_{2,Z}(\hat{\mathbf{b}}) + C_{2,\mathrm{int}}, \qquad
+C_{2,Z}(\hat{\mathbf{b}}) := [\HZ(\hat{\mathbf{b}}), C_1], \quad
+C_{2,\mathrm{int}} := [\Hint, C_1].
+\end{equation}
+Because $\HZ, \Hint, \PS$ are Hermitian, $C_1^\dagger = -C_1$ (anti-Hermitian), while both $C_{2,Z}$ and $C_{2,\mathrm{int}}$ are \emph{Hermitian}:
+\[
+C_{2,Z}^\dagger = (\HZ C_1 - C_1 \HZ)^\dagger = C_1^\dagger \HZ - \HZ C_1^\dagger = -C_1 \HZ + \HZ C_1 = C_{2,Z},
+\]
+and identically $C_{2,\mathrm{int}}^\dagger = C_{2,\mathrm{int}}$. Expanding the Frobenius norm gives
+\begin{equation}
+\label{eq:S1_M4_expand}
+M_4(\hat{\mathbf{b}}) = \frac{1}{d_I}\Tr\big(C_2^\dagger C_2\big)
+= \frac{1}{d_I}\|C_{2,Z}(\hat{\mathbf{b}})\|_F^2
++ \frac{2}{d_I}\operatorname{Re}\Tr\big(C_{2,Z}(\hat{\mathbf{b}})\,C_{2,\mathrm{int}}\big)
++ \frac{1}{d_I}\|C_{2,\mathrm{int}}\|_F^2.
+\end{equation}
+
+\begin{lemma}[Antiunitary Total-Spin Time-Reversal Orthogonality]
+\label{lem:S1_TR_orthog}
+Let $\Theta := \big(\ee^{-\ii\pi S_{1y}} \otimes \ee^{-\ii\pi S_{2y}} \otimes \bigotimes_{k=1}^K \ee^{-\ii\pi I_{k,y}}\big)\mathcal{K}$ be the antiunitary total-spin time-reversal operator on $\mathcal{H}$, where $\mathcal{K}$ denotes complex conjugation in the standard $S_{ez}, I_{k,z}$ product basis. Then:
+\begin{enumerate}[label=(\roman*),leftmargin=1.8em,itemsep=2pt]
+\item $\Theta S_{e\alpha} \Theta^{-1} = -S_{e\alpha}$ and $\Theta I_{k,\beta} \Theta^{-1} = -I_{k,\beta}$ for all $e\in\{1,2\}$, $k\in\{1,\dots,K\}$, $\alpha,\beta\in\{1,2,3\}$.
+\item $\Theta \PS \Theta^{-1} = +\PS$, $\Theta \Hint \Theta^{-1} = +\Hint$ ($T$-even), and $\Theta \HZ(\hat{\mathbf{b}}) \Theta^{-1} = -\HZ(\hat{\mathbf{b}})$ ($T$-odd).
+\item $\Theta C_1 \Theta^{-1} = +C_1$, $\Theta C_{2,\mathrm{int}} \Theta^{-1} = +C_{2,\mathrm{int}}$ ($T$-even), and $\Theta C_{2,Z}(\hat{\mathbf{b}}) \Theta^{-1} = -C_{2,Z}(\hat{\mathbf{b}})$ ($T$-odd).
+\item $\Tr\big(C_{2,Z}(\hat{\mathbf{b}})\,C_{2,\mathrm{int}}\big) = 0$ identically for all $\omega_L, \hat{\mathbf{b}}, J_{\mathrm{ex}}, \{\mathbf{A}_k\}, \{e_k\}$, and all real symmetric (in fact even arbitrary real) $\mathbf{D}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) For any spin-$J$ representation in the standard Condon--Shortley basis $\{|J,m\rangle\}$, $J_x$ and $J_z$ are real matrices while $J_y$ is purely imaginary, so $\mathcal{K} J_x \mathcal{K} = J_x$, $\mathcal{K} J_z \mathcal{K} = J_z$, and $\mathcal{K} J_y \mathcal{K} = -J_y$. A $\pi$-rotation about $y$ reverses $x$ and $z$ while preserving $y$: $\ee^{-\ii\pi J_y}(J_x, J_y, J_z)\ee^{\ii\pi J_y} = (-J_x, J_y, -J_z)$. Composing gives $(\ee^{-\ii\pi J_y}\mathcal{K})\mathbf{J}(\ee^{-\ii\pi J_y}\mathcal{K})^{-1} = -\mathbf{J}$ on every spin factor independently.
+
+(ii) Since $\Theta$ is multiplicative on operators ($\Theta(AB)\Theta^{-1} = (\Theta A\Theta^{-1})(\Theta B\Theta^{-1})$) and conjugates scalar coefficients ($\Theta c\Theta^{-1} = \bar{c}$), every real linear combination of spin-bilinear products ($S_{1\alpha}S_{2\beta}$ or $S_{e_k,\alpha}I_{k,\beta}$) transforms with $(-1)(-1) = +1$, while $\HZ(\hat{\mathbf{b}})$ is real-linear in single spins and transforms with $-1$. Thus $\PS$, $\HHF$, $\Hex$, and $\Hdip$ are all $T$-even while $\HZ$ is $T$-odd. (Note: any real nuclear--nuclear dipolar coupling $\sum I_{k,\alpha} D^{(kk')}_{\alpha\beta} I_{k',\beta}$ or nuclear electric quadrupolar coupling $\sum I_{k,\alpha} Q^{(k)}_{\alpha\beta} I_{k,\beta}$ is likewise quadratic in spins, commutes with $\PS$, and is $T$-even, so the theorem extends immediately to them as well.)
+
+(iii) From $\Theta[A,B]\Theta^{-1} = [\Theta A\Theta^{-1}, \Theta B\Theta^{-1}]$, we obtain $\Theta C_1 \Theta^{-1} = [\Theta\Hint\Theta^{-1}, \Theta\PS\Theta^{-1}] = +C_1$, $\Theta C_{2,\mathrm{int}} \Theta^{-1} = [+\Hint, +C_1] = +C_{2,\mathrm{int}}$, and $\Theta C_{2,Z}\Theta^{-1} = [-\HZ, +C_1] = -C_{2,Z}$.
+
+(iv) For any antiunitary operator $\Theta$ and any linear operator $M$ on a finite-dimensional Hilbert space, picking any orthonormal basis $\{|n\rangle\}$ yields the orthonormal basis $\{|\tilde{n}\rangle := \Theta|n\rangle\}$ with $\langle \tilde{n} | \Theta M \Theta^{-1} | \tilde{n} \rangle = \langle \Theta n | \Theta(M n) \rangle = \overline{\langle n | M | n \rangle}$, hence $\Tr(\Theta M \Theta^{-1}) = \overline{\Tr(M)}$. For two Hermitian operators $X, Y$, $\overline{\Tr(XY)} = \Tr((XY)^\dagger) = \Tr(YX) = \Tr(XY) \in \mathbb{R}$. Setting $X = C_{2,Z}(\hat{\mathbf{b}})$ and $Y = C_{2,\mathrm{int}}$ gives
+\[
+\Tr(C_{2,Z} C_{2,\mathrm{int}})
+= \overline{\Tr(C_{2,Z} C_{2,\mathrm{int}})}
+= \Tr\big(\Theta C_{2,Z} C_{2,\mathrm{int}} \Theta^{-1}\big)
+= \Tr\big((-C_{2,Z})(+C_{2,\mathrm{int}})\big)
+= -\Tr(C_{2,Z} C_{2,\mathrm{int}}),
+\]
+forcing $\Tr(C_{2,Z} C_{2,\mathrm{int}}) = 0$ identically.
+\end{proof}
+
+\begin{proof}[Completion of Proof of Theorem~2 (Main Text)]
+By Lemma~\ref{lem:S1_TR_orthog}(iv), the cross term in Eq.~\eqref{eq:S1_M4_expand} vanishes identically, leaving $M_4(\hat{\mathbf{b}}) = \frac{1}{d_I}\|C_{2,Z}(\hat{\mathbf{b}})\|_F^2 + M_4^{\mathrm{int}}$, where $M_4^{\mathrm{int}} := \frac{1}{d_I}\|C_{2,\mathrm{int}}\|_F^2$ is strictly independent of $\hat{\mathbf{b}}$ (absorbing all $J_{\mathrm{ex}}$ and $\mathbf{D}$ contributions). Evaluating $C_{2,Z}(\hat{\mathbf{b}})$ via Eq.~\eqref{eq:S1_C1} and Lemma~\ref{lem:S1_elec_identities}(iii):
+\begin{align}
+C_{2,Z}(\hat{\mathbf{b}})
+&= \omega_L \sum_{k=1}^K \sum_{\alpha,\beta,\gamma=1}^3 b_\gamma A^{(k)}_{\alpha\beta}\sigma_{e_k} \big([Z_\gamma, V_\alpha] \otimes I_{k,\beta}\big) \nonumber\\
+&= \ii\omega_L \sum_{k=1}^K \sum_{\beta,\eta=1}^3 \sigma_{e_k} \left(\sum_{\gamma,\alpha=1}^3 \epsilon_{\gamma\alpha\eta} b_\gamma A^{(k)}_{\alpha\beta}\right) (V_\eta \otimes I_{k,\beta})
+= \ii\omega_L \sum_{k=1}^K \sum_{\beta,\eta=1}^3 \sigma_{e_k} \big(\hat{\mathbf{b}} \times (\mathbf{A}_k \mathbf{e}_\beta)\big)_\eta (V_\eta \otimes I_{k,\beta}).
+\label{eq:S1_C2Z}
+\end{align}
+Computing $\frac{1}{d_I}\Tr(C_{2,Z}^\dagger C_{2,Z})$ using Lemma~\ref{lem:S1_elec_identities}(ii) ($\Tr_e(V_\eta^\dagger V_{\eta'}) = \frac{1}{2}\delta_{\eta\eta'}$), Eq.~\eqref{eq:S1_nuc_trace}, $\sigma_{e_k}^2 = 1$, and Lagrange's cross-product identity $\|\hat{\mathbf{b}} \times \mathbf{v}\|_2^2 = \|\mathbf{v}\|_2^2 - (\hat{\mathbf{b}}^\top \mathbf{v})^2$ (since $\|\hat{\mathbf{b}}\|_2 = 1$):
+\begin{align}
+\frac{1}{d_I}\|C_{2,Z}(\hat{\mathbf{b}})\|_F^2
+&= \omega_L^2 \sum_{k=1}^K \frac{I_k(I_k+1)}{6} \sum_{\beta=1}^3 \big\|\hat{\mathbf{b}} \times (\mathbf{A}_k \mathbf{e}_\beta)\big\|_2^2 \nonumber\\
+&= \omega_L^2 \sum_{k=1}^K \frac{I_k(I_k+1)}{6} \sum_{\beta=1}^3 \Big[\|\mathbf{A}_k \mathbf{e}_\beta\|_2^2 - \big(\hat{\mathbf{b}}^\top \mathbf{A}_k \mathbf{e}_\beta\big)^2\Big] \nonumber\\
+&= \omega_L^2 \sum_{k=1}^K \frac{I_k(I_k+1)}{6} \Big[\Tr(\mathbf{A}_k \mathbf{A}_k^\top) - \hat{\mathbf{b}}^\top \mathbf{A}_k \mathbf{A}_k^\top \hat{\mathbf{b}}\Big],
+\label{eq:S1_C2Z_norm}
+\end{align}
+where we used $\sum_{\beta=1}^3 \mathbf{A}_k \mathbf{e}_\beta (\mathbf{A}_k \mathbf{e}_\beta)^\top = \mathbf{A}_k \Big(\sum_{\beta=1}^3 \mathbf{e}_\beta \mathbf{e}_\beta^\top\Big) \mathbf{A}_k^\top = \mathbf{A}_k \mathbf{A}_k^\top$. Subtracting the reference orientation $\hat{\mathbf{n}}_0 \in S^2$ cancels both $M_4^{\mathrm{int}}$ and the orientation-independent trace term $\Tr(\mathbf{A}_k\mathbf{A}_k^\top)$, proving Eq.~(6) of the main text:
+\begin{equation}
+\label{eq:S1_M4_diff_final}
+M_4(\hat{\mathbf{b}}) - M_4(\hat{\mathbf{n}}_0)
+= \sum_{k=1}^K \frac{I_k(I_k+1)}{6}\,\omega_L^2\left(\hat{\mathbf{n}}_0^\top \mathbf{A}_k \mathbf{A}_k^\top \hat{\mathbf{n}}_0 - \hat{\mathbf{b}}^\top \mathbf{A}_k \mathbf{A}_k^\top \hat{\mathbf{b}}\right).
+\end{equation}
+For a single axial nucleus $\mathbf{A} = \mathrm{diag}(A_\perp, A_\perp, A_\parallel)$ with $\hat{\mathbf{n}}_0 = \hat{\mathbf{z}}$ and $\hat{\mathbf{b}} = (\sin\theta\cos\phi, \sin\theta\sin\phi, \cos\theta)^\top$, we obtain $\hat{\mathbf{n}}_0^\top \mathbf{A}\mathbf{A}^\top \hat{\mathbf{n}}_0 = A_\parallel^2$ and $\hat{\mathbf{b}}^\top \mathbf{A}\mathbf{A}^\top \hat{\mathbf{b}} = A_\perp^2 \sin^2\theta + A_\parallel^2 \cos^2\theta$, so their difference is $(A_\parallel^2 - A_\perp^2)\sin^2\theta$, yielding Eq.~(7). For isotropic hyperfine tensors $\mathbf{A}_k\mathbf{A}_k^\top = a_k^2 \mathbb{I}_3$, $\hat{\mathbf{b}}^\top (a_k^2 \mathbb{I}_3) \hat{\mathbf{b}} = a_k^2 \|\hat{\mathbf{b}}\|_2^2 = a_k^2$ is constant on $S^2$, giving $M_4(\hat{\mathbf{b}}) - M_4(\hat{\mathbf{n}}_0) \equiv 0$ regardless of $\mathbf{D}^\top = \mathbf{D}$ or $J_{\mathrm{ex}}$.
+\end{proof}
+
+\begin{remark}[Explicit Worked Rational Constants]
+For the canonical $8\times 8$ spin-$1/2$ model ($\omega_L = \frac{7}{5}$, $A_\perp = \frac{1}{2}$, $A_\parallel = 5$, $I = \frac{1}{2}$, $I(I+1)/6 = \frac{1}{8}$):
+\[
+M_2 = \frac{1}{8}\left(2\cdot\frac{1}{4} + 25\right) = \frac{51}{16} = 3.1875, \qquad
+\Delta M_4(90^\circ) = \frac{1}{8}\cdot\frac{49}{25}\left(25 - \frac{1}{4}\right) = \frac{4851}{800} = 6.06375.
+\]
+For the canonical $12\times 12$ $^{14}\text{N}$ ($I=1$, $I(I+1)/6 = \frac{1}{3}$) model: $M_2 = \frac{1}{3}(\frac{1}{2} + 25) = \frac{17}{2} = 8.5$ and $\Delta M_4(90^\circ) = \frac{1}{3}\cdot\frac{49}{25}\cdot\frac{99}{4} = \frac{1617}{100} = 16.17$. Both exact rational identities are kernel-checked in Lean~4 (\leanid{M2\_8\_canonical}, \leanid{M4\_8\_canonical\_90deg}, \leanid{M4\_12\_canonical\_90deg}).
+\end{remark}
+
+%==============================================================================
+\section{Exact Commuting Resolvent Expansion, Sign-Flip Existence, and Mittag--Leffler Asymptotics}
+\label{sec:S2}
+%==============================================================================
+
+\subsection{Proof of Theorem 3 (Two-Sided \texorpdfstring{$\Theta(\xi^{-5})$}{Theta(xi\^{}(-5))} Envelope and Sign-Flip Guarantee)}
+
+Under global commuting Markovian depolarization ($\mu = 1$) with symmetric Haberkorn rate $k_S = k_T = k > 0$ and total damping $s := k + \gamma = k(1+\xi)$ ($\xi = \gamma/k \ge 1$), the spectral singlet yield Eq.~(10) of the main text reads
+\begin{equation}
+\label{eq:S2_phi1}
+\Phi_S^{(1)}(\theta) = \frac{1}{4} - \frac{k}{4s} + \sum_{a,b} W_{ab}(\theta)\,\frac{ks}{s^2 + \lambda_{ab}(\theta)}, \qquad \lambda_{ab}(\theta) := \omega_{ab}(\theta)^2 \ge 0,
+\end{equation}
+with $\sum_{a,b} W_{ab}(\theta)\lambda_{ab}(\theta)^n = M_{2n}(\theta)$.
+
+\begin{proof}[Complete Proof of Theorem~3 (Main Text)]
+For every $s > 0$ and $\lambda \ge 0$, clearing the denominator $s^5(s^2+\lambda)$ immediately verifies the exact rational identity
+\begin{equation}
+\label{eq:S2_resolvent_id}
+\frac{s}{s^2+\lambda} - \left(\frac{1}{s} - \frac{\lambda}{s^3} + \frac{\lambda^2}{s^5}\right)
+= \frac{s^6 - (s^2+\lambda)(s^4 - \lambda s^2 + \lambda^2)}{s^5(s^2+\lambda)}
+= -\frac{\lambda^3}{s^5(s^2+\lambda)}.
+\end{equation}
+Multiplying Eq.~\eqref{eq:S2_resolvent_id} by $k W_{ab}(\theta)$ and summing over all eigenstate pairs $(a,b)$ gives
+\begin{equation}
+\label{eq:S2_phi_expand}
+\Phi_S^{(1)}(\theta) = \frac{1}{4} + \frac{3k}{4s} - \frac{k M_2(\theta)}{s^3} + \frac{k M_4(\theta)}{s^5} - R(\theta; s), \qquad
+R(\theta; s) := \sum_{a,b} W_{ab}(\theta)\,\frac{k\lambda_{ab}(\theta)^3}{s^5(s^2+\lambda_{ab}(\theta))}.
+\end{equation}
+Since $W_{ab}(\theta) \ge 0$ and $\lambda_{ab}(\theta) \ge 0$, every summand satisfies $0 \le \frac{\lambda_{ab}^3}{s^2+\lambda_{ab}} \le \frac{\lambda_{ab}^3}{s^2}$, so
+\begin{equation}
+\label{eq:S2_rem_bound}
+0 \le R(\theta; s) \le \frac{k M_6(\theta)}{s^7} \le \frac{k B_6}{s^7},
+\end{equation}
+where $B_6 \ge \max\{M_6(\theta), M_6(0)\}$. Subtracting $\Phi_S^{(1)}(0)$ from $\Phi_S^{(1)}(\theta)$ cancels $\frac{1}{4}$, $\frac{3k}{4s}$ ($M_0 = 1$), and $-\frac{k M_2}{s^3}$ identically by Theorem~1:
+\begin{equation}
+\label{eq:S2_diff}
+\Phi_S^{(1)}(\theta) - \Phi_S^{(1)}(0) = \frac{k\,\Delta M_4}{s^5} + R(0; s) - R(\theta; s), \qquad \Delta M_4 := M_4(\theta) - M_4(0) > 0.
+\end{equation}
+Applying Eq.~\eqref{eq:S2_rem_bound} to both remainders gives $-\frac{k B_6}{s^7} \le R(0; s) - R(\theta; s) \le +\frac{k B_6}{s^7}$. Under the stated threshold hypothesis $2 B_6 \le \Delta M_4 s^2 = \Delta M_4 k^2(1+\xi)^2$, we have $\frac{k B_6}{s^7} \le \frac{k \Delta M_4}{2 s^5}$, and therefore
+\begin{equation}
+\label{eq:S2_s_bounds}
+\frac{k\,\Delta M_4}{2 s^5} \le \Phi_S^{(1)}(\theta) - \Phi_S^{(1)}(0) \le \frac{3k\,\Delta M_4}{2 s^5}.
+\end{equation}
+Finally, for all $\xi \ge 1$ we have $\xi < 1+\xi \le 2\xi$, hence $k^5 \xi^5 < s^5 \le 32 k^5 \xi^5$. Substituting these bounds into Eq.~\eqref{eq:S2_s_bounds} yields Eq.~(12) of the main text:
+\begin{equation}
+\label{eq:S2_xi5_final}
+\frac{\Delta M_4}{64 k^4 \xi^5} \le \Phi_S^{(1)}(\theta) - \Phi_S^{(1)}(0) \le \frac{3\Delta M_4}{2 k^4 \xi^5}.
+\end{equation}
+For part~(b) (Sign-Flip Blind Spot), define the continuous function $f(\xi) := \Phi_S^{(1)}(0; \xi) - \Phi_S^{(1)}(\theta; \xi)$ on $[0,\infty)$. If $f(\xi_0) > 0$ at some weak/intermediate noise $\xi_0 > 0$ while $\Delta M_4(\theta) > 0$, choosing any $\xi_1 \ge \max(1, \xi_0)$ with $2 B_6 \le \Delta M_4(\theta) k^2(1+\xi_1)^2$ gives $f(\xi) \le -\frac{\Delta M_4(\theta)}{64 k^4 \xi^5} < 0$ for every $\xi \ge \xi_1$. By the Intermediate Value Theorem on $[\xi_0, \xi_1]$, the zero set $\{ \xi \in [\xi_0, \xi_1] : f(\xi) = 0 \}$ is non-empty and compact, so its largest root $\xiflip := \max\{\xi > 0 : f(\xi) = 0\}$ exists in $(\xi_0, \xi_1)$ and satisfies $f(\xi) < 0$ strictly for all $\xi > \xiflip$.
+\end{proof}
+
+\subsection{Mittag--Leffler \texorpdfstring{$\Theta(\xi^{-\mu})$}{Theta(xi\^{}(-mu))} Expansion and 50-Digit Quadrature Validation}
+
+For $0 < \mu < 1$, Pollard's complete monotonicity theorem expresses $E_\mu(-(\gamma t)^\mu) = \int_0^\infty \ee^{-\gamma r t} K_\mu(r)\,\dd r$ with strictly positive spectral density
+\begin{equation}
+\label{eq:S2_pollard}
+K_\mu(r) = \frac{1}{\pi}\frac{r^{\mu-1}\sin(\pi\mu)}{r^{2\mu} + 2r^\mu\cos(\pi\mu) + 1} > 0, \qquad
+\int_0^\infty K_\mu(r)\,\dd r = 1.
+\end{equation}
+Inserting $\int_0^\infty \ee^{-st} E_\mu(-(\gamma t)^\mu)\,\dd t = \frac{s^{\mu-1}}{s^\mu + \gamma^\mu}$ ($\operatorname{Re} s > 0$) into the Haberkorn yield gives Eq.~(9) of the main text. Factoring out $\gamma^{-\mu} = (k\xi)^{-\mu}$ for $\gamma > \max_{a,b} |k+\ii\omega_{ab}|$ yields the convergent geometric series
+\begin{equation}
+\label{eq:S2_ML_series}
+\frac{k(k+\ii\omega_{ab})^{\mu-1}}{(k+\ii\omega_{ab})^\mu + \gamma^\mu}
+= \sum_{m=1}^\infty (-1)^{m-1} \xi^{-m\mu}\left(1 + \ii\frac{\omega_{ab}}{k}\right)^{m\mu - 1}.
+\end{equation}
+Taking the real part and summing over $(a,b)$ gives Eq.~(13) of the main text with leading coefficient
+\begin{equation}
+\label{eq:S2_ML_coeff}
+C_\mu(\theta) := \sum_{a,b} W_{ab}(\theta)\,\big(1 + \Omega_{ab}(\theta)^2\big)^{(\mu-1)/2}\cos\!\Big((1-\mu)\arctan \Omega_{ab}(\theta)\Big) - \frac{1}{4}, \qquad \Omega_{ab}(\theta) := \frac{\omega_{ab}(\theta)}{k}.
+\end{equation}
+Differentiating $f_\mu(\Omega) := (1+\Omega^2)^{(\mu-1)/2}\cos((1-\mu)\arctan\Omega)$ gives
+\[
+f_\mu'(\Omega) = -(1-\mu)(1+\Omega^2)^{(\mu-2)/2}\sin\!\big((2-\mu)\arctan\Omega\big).
+\]
+For $0 < \mu < 1$, $f_\mu(\Omega)$ is strictly positive and strictly decreasing near $\Omega \sim 1$ without cancelling $O(\Omega^2)$, so $C_\mu(0) - C_\mu(\theta) \neq 0$ generically and $|\DeltaPhi^{(\mu)}(\xi)| / |\DeltaPhi^{(1)}(\xi)| = \Theta(\xi^{5-\mu})$.
+
+Table~\ref{tab:S2_laplace_quad} presents the full 20-case 50-digit Laplace-vs.-piecewise Gauss--Legendre quadrature audit (from \texttt{verify\_01\_moments\_and\_laplace.json}, resolving the $t=0$ Mittag--Leffler branch point via $t=u^{10}$ panel grading up to $T_{\mathrm{cut}} = 42/k$ at $\theta = 45^\circ$, with $\xi = 3.0$ for canonical models and $\xi = 30.0$ for physical $50\,\mu\text{T}$ $\mathrm{FAD}^{\bullet-}$).
+
+\begin{table}[htbp]
+\centering
+\caption{Full 20-case verification of the exact spectral Laplace--Mittag--Leffler yield (Eq.~(9) of main text) against independent adaptive 16-point piecewise Gauss--Legendre time-domain quadrature at $\theta = 45^\circ$ ($\xi = 3.0$ for canonical models; $\xi = 30.0$ for physical $50\,\mu\text{T}$ $\mathrm{FAD}^{\bullet-}$).}
+\label{tab:S2_laplace_quad}
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Model & Dim & $\mu$ & Panels / Nodes & $\Phi_S^{\mathrm{exact}}$ & $\Phi_S^{\mathrm{quad}}$ & $|\Phi_S^{\mathrm{exact}} - \Phi_S^{\mathrm{quad}}|$ \\
+\midrule
+Spin-$1/2$ canonical & $8$ & $0.40$ & $89 / 1424$ & $0.3888404501349954$ & $0.3888404501349947$ & $6.66\times 10^{-16}$ \\
+Spin-$1/2$ canonical & $8$ & $0.50$ & $89 / 1424$ & $0.3907385347091257$ & $0.3907385347091257$ & $0.0$ \\
+Spin-$1/2$ canonical & $8$ & $0.70$ & $89 / 1424$ & $0.3949629923501276$ & $0.3949629923501272$ & $3.89\times 10^{-16}$ \\
+Spin-$1/2$ canonical & $8$ & $0.85$ & $89 / 1424$ & $0.3985931999998459$ & $0.3985931999998455$ & $3.89\times 10^{-16}$ \\
+Spin-$1/2$ canonical & $8$ & $1.00$ & $89 / 1424$ & $0.4026928577238141$ & $0.4026928577238141$ & $0.0$ \\
+\midrule
+$^{14}\text{N}$ ($I=1$) canonical & $12$ & $0.40$ & $105 / 1680$ & $0.4088100731166247$ & $0.4088100731166239$ & $7.22\times 10^{-16}$ \\
+$^{14}\text{N}$ ($I=1$) canonical & $12$ & $0.50$ & $105 / 1680$ & $0.4039971739909682$ & $0.4039971739909682$ & $0.0$ \\
+$^{14}\text{N}$ ($I=1$) canonical & $12$ & $0.70$ & $105 / 1680$ & $0.3952544942091968$ & $0.3952544942091963$ & $5.00\times 10^{-16}$ \\
+$^{14}\text{N}$ ($I=1$) canonical & $12$ & $0.85$ & $105 / 1680$ & $0.3895970066039190$ & $0.3895970066039187$ & $3.33\times 10^{-16}$ \\
+$^{14}\text{N}$ ($I=1$) canonical & $12$ & $1.00$ & $105 / 1680$ & $0.3847555579876466$ & $0.3847555579876466$ & $0.0$ \\
+\midrule
+$\mathrm{FAD}^{\bullet-}$ canonical & $36$ & $0.40$ & $134 / 2144$ & $0.3846704234945145$ & $0.3846704234945139$ & $6.11\times 10^{-16}$ \\
+$\mathrm{FAD}^{\bullet-}$ canonical & $36$ & $0.50$ & $134 / 2144$ & $0.3839082463561863$ & $0.3839082463561864$ & $5.55\times 10^{-17}$ \\
+$\mathrm{FAD}^{\bullet-}$ canonical & $36$ & $0.70$ & $134 / 2144$ & $0.3828316298376895$ & $0.3828316298376892$ & $3.33\times 10^{-16}$ \\
+$\mathrm{FAD}^{\bullet-}$ canonical & $36$ & $0.85$ & $134 / 2144$ & $0.3824518533322993$ & $0.3824518533322990$ & $2.22\times 10^{-16}$ \\
+$\mathrm{FAD}^{\bullet-}$ canonical & $36$ & $1.00$ & $134 / 2144$ & $0.3824158761147016$ & $0.3824158761147017$ & $5.55\times 10^{-17}$ \\
+\midrule
+$\mathrm{FAD}^{\bullet-}$ physical $50\,\mu\text{T}$ & $36$ & $0.40$ & $6021 / 96336$ & $0.2907233836942134$ & $0.2907233836942131$ & $2.78\times 10^{-16}$ \\
+$\mathrm{FAD}^{\bullet-}$ physical $50\,\mu\text{T}$ & $36$ & $0.50$ & $6021 / 96336$ & $0.2818034264949053$ & $0.2818034264949053$ & $0.0$ \\
+$\mathrm{FAD}^{\bullet-}$ physical $50\,\mu\text{T}$ & $36$ & $0.70$ & $6021 / 96336$ & $0.2693404545174072$ & $0.2693404545174071$ & $1.11\times 10^{-16}$ \\
+$\mathrm{FAD}^{\bullet-}$ physical $50\,\mu\text{T}$ & $36$ & $0.85$ & $6021 / 96336$ & $0.2635559967844881$ & $0.2635559967844880$ & $5.55\times 10^{-17}$ \\
+$\mathrm{FAD}^{\bullet-}$ physical $50\,\mu\text{T}$ & $36$ & $1.00$ & $6021 / 96336$ & $0.2597234457433788$ & $0.2597234457433788$ & $0.0$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%==============================================================================
+\section{Feshbach--Schur Dark-Manifold Derivations for All Five Channels and Asymmetric Haberkorn Conservation}
+\label{sec:S3}
+%==============================================================================
+
+\subsection{General Block Schur Complement Reduction}
+
+Let $\mathcal{L}_{\mathrm{tot}}(\theta) = \mathcal{L}_0(\theta) + \gamma \mathcal{D}_{\mathrm{ch}}$ act on Liouville operator space $\mathcal{B}(\mathcal{H}) = \mathcal{M}_{\mathrm{dark}} \oplus \mathcal{M}_{\mathrm{bright}}$, where $\mathcal{D}_{\mathrm{ch}}\big|_{\mathcal{M}_{\mathrm{dark}}} = 0$ and $-\mathcal{D}_{\mathrm{ch}}\big|_{\mathcal{M}_{\mathrm{bright}}} \ge c_0 > 0$. Writing $P_D$ and $Q_B = \mathbb{I} - P_D$ for the orthogonal projections onto $\mathcal{M}_{\mathrm{dark}}$ and $\mathcal{M}_{\mathrm{bright}}$, the linear system $(-\mathcal{L}_{\mathrm{tot}})\bar{\rho} = \rho_0$ splits into block equations
+\begin{equation}
+\label{eq:S3_blocks}
+\begin{pmatrix} -A & -B \\ -C & -E(\gamma) \end{pmatrix}
+\begin{pmatrix} \bar{\rho}_D \\ \bar{\rho}_B \end{pmatrix}
+= \begin{pmatrix} \rho_{0,D} \\ \rho_{0,B} \end{pmatrix},
+\end{equation}
+with $A := P_D \mathcal{L}_0 P_D$, $B := P_D \mathcal{L}_0 Q_B$, $C := Q_B \mathcal{L}_0 P_D$, and $E(\gamma) := Q_B(\mathcal{L}_0 + \gamma \mathcal{D}_{\mathrm{ch}})Q_B$. Eliminating $\bar{\rho}_B = -E(\gamma)^{-1}(\rho_{0,B} + C\bar{\rho}_D)$ gives the exact dark-manifold effective equation
+\begin{equation}
+\label{eq:S3_schur}
+-\mathcal{L}_{\mathrm{eff}}(\gamma)\,\bar{\rho}_D = \rho_{0,D} - B\,E(\gamma)^{-1}\rho_{0,B}, \qquad
+\mathcal{L}_{\mathrm{eff}}(\gamma) := A - B\,E(\gamma)^{-1} C.
+\end{equation}
+Because $E(\gamma) = \gamma Q_B \mathcal{D}_{\mathrm{ch}} Q_B \big(\mathbb{I} + \gamma^{-1} (Q_B\mathcal{D}_{\mathrm{ch}}Q_B)^{-1} Q_B\mathcal{L}_0 Q_B\big)$, for $\gamma \gg \|\mathcal{L}_0\|$ we have the convergent Neumann expansion
+\begin{equation}
+\label{eq:S3_neumann}
+E(\gamma)^{-1} = \frac{1}{\gamma} \mathcal{D}_B^{-1} - \frac{1}{\gamma^2}\mathcal{D}_B^{-1} \mathcal{L}_{BB} \mathcal{D}_B^{-1} + \frac{1}{\gamma^3}\mathcal{D}_B^{-1} \mathcal{L}_{BB} \mathcal{D}_B^{-1} \mathcal{L}_{BB} \mathcal{D}_B^{-1} - \cdots,
+\end{equation}
+where $\mathcal{D}_B := Q_B\mathcal{D}_{\mathrm{ch}}Q_B$ and $\mathcal{L}_{BB} := Q_B\mathcal{L}_0 Q_B$. Below we evaluate Eq.~\eqref{eq:S3_schur}--\eqref{eq:S3_neumann} for each local channel.
+
+\subsection{Channel 2: Singlet--Triplet Dephasing (\texorpdfstring{$\mathcal{D}_{\mathrm{STD}}$}{D\_STD}) and Zeno Cancellation of \texorpdfstring{$M_2$}{M2}}
+
+For $\mathcal{D}_{\mathrm{STD}}(\rho) = \PS\rho\PS + \PT\rho\PT - \rho$, we have $\mathcal{D}_B = -\mathbb{I}_B$ on $\mathcal{M}_{\mathrm{bright}} = \PS\mathcal{B}(\mathcal{H})\PT \oplus \PT\mathcal{B}(\mathcal{H})\PS$, while $\rho_0 = \PS/d_I \in \mathcal{M}_{\mathrm{dark}}$ ($\rho_{0,B} = 0$) and $\PS \in \mathcal{M}_{\mathrm{dark}}$. Crucially, $[\HZ,\PS]=[\Hex,\PS]=[\Hdip,\PS]=0$ implies that $B = -\ii P_D \ad_{\HHF} Q_B$ and $C = -\ii Q_B \ad_{\HHF} P_D$ are \emph{strictly independent of $\theta$}. Substituting Eq.~\eqref{eq:S3_neumann} with $\mathcal{D}_B = -\mathbb{I}_B$ (so $E(\gamma)^{-1} = -\gamma^{-1}\mathbb{I}_B - \gamma^{-2}\mathcal{L}_{BB} - \gamma^{-3}\mathcal{L}_{BB}^2 - \cdots$) into $\mathcal{L}_{\mathrm{eff}} = A - B E(\gamma)^{-1} C$ gives
+\begin{equation}
+\label{eq:S3_std_eff}
+\mathcal{L}_{\mathrm{eff}}^{\mathrm{STD}}(\theta) = A(\theta)
++ \frac{1}{\gamma} G_1 + \frac{1}{\gamma^2} G_2(\theta) + O(\gamma^{-3}),
+\qquad G_1 := B C, \quad G_2(\theta) := B \mathcal{L}_{BB}(\theta) C.
+\end{equation}
+Acting on the singlet state $\rho_0 = \PS/d_I$ under symmetric recombination $k_S = k_T = k$ (so $(-A(\theta))^{-1}\rho_0 = k^{-1}\rho_0$ and $A(\theta)^\dagger\PS = -k\PS$), expanding $(-\mathcal{L}_{\mathrm{eff}})^{-1} = (-A)^{-1} + \gamma^{-1}(-A)^{-1}G_1(-A)^{-1} + \gamma^{-2}\bigl[(-A)^{-1}G_2(-A)^{-1} + (-A)^{-1}G_1(-A)^{-1}G_1(-A)^{-1}\bigr] + O(\gamma^{-3})$ reveals three exact facts:
+\begin{enumerate}[label=(\roman*),leftmargin=1.8em,itemsep=1pt]
+\item The $O(\gamma^{-1})$ Zeno leakage term equals
+\begin{equation}
+\label{eq:S3_std_M2}
+\frac{1}{k\gamma}\Tr\big[\PS G_1(\rho_0)\big] = -\frac{1}{k\gamma d_I}\Tr\big([\HHF, \PS]^\dagger [\HHF, \PS]\big) = -\frac{M_2(\theta)}{k\gamma},
+\end{equation}
+strictly independent of $\theta$ by Theorem~1!
+\item The $O(\gamma^{-2})$ bright-space trace $\frac{1}{k\gamma^2}\Tr[\PS G_2(\theta)\rho_0]$ is \emph{likewise} $\theta$-independent! Specifically, $\mathcal{L}_{BB}(\theta) = -k\mathbb{I}_B - \ii Q_B\ad_{\HZ(\theta)+\Hex+\Hdip+\HHF}Q_B$; the $-k\mathbb{I}_B$ piece contributes $+k M_2$, while the Zeeman piece vanishes identically by cyclicity because $[\HZ,\PS]=0 \implies \Tr\bigl(\PS[\HHF,[\HZ,[\HHF,\PS]]]\bigr) = -\Tr\bigl([\HHF,\PS][\HZ,[\HHF,\PS]]\bigr) = 0$ (verified numerically on $8\times 8$ to $|\Delta_\theta \Tr[\PS G_2\rho_0]| = 4.4\times 10^{-16}$).
+\item Consequently, the leading $\Theta(\xi^{-2})$ directional contrast arises strictly from the \emph{dark-triplet iterate}:
+\begin{equation}
+\label{eq:S3_std_dark}
+\DeltaPhi^{\mathrm{STD}}(\theta) = \frac{1}{k\gamma^2}\,\Delta_\theta\Tr\!\Bigl[\PS G_1 \bigl(-A(\theta)\bigr)^{-1} G_1(\rho_0)\Bigr] + O(\gamma^{-3}).
+\end{equation}
+Here $G_1(\rho_0)$ injects population and coherences into the triplet block $\PT\mathcal{B}(\mathcal{H})\PT \subset \mathcal{M}_{\mathrm{dark}}$, where the $O(\gamma^0)$ dark propagator $(-A(\theta))^{-1}$ mediates $\theta$-dependent Zeeman precession before a second $G_1$ maps back onto $\PS$. On the canonical $8\times 8$ system, Eq.~\eqref{eq:S3_std_dark} evaluates analytically to $+4.5120785\,\xi^{-2}$, matching the exact 45-digit Liouvillian yield $+4.5060039\,\xi^{-2}$ at $\xi = 10^4$ to $0.13\%$. (Lean~4 Theorem~\leanid{std\_zeno\_two\_sided\_xi2} certifies a rate-scaled reduced two-mode surrogate capturing the Zeno cancellation of $M_2$.)
+\end{enumerate}
+
+\subsection{Channel 3: Local Isotropic Spin Depolarization (\texorpdfstring{$\mathcal{D}_{\mathrm{iso},1}$}{D\_iso,1}, \texorpdfstring{$\mathcal{D}_{\mathrm{iso},2}$}{D\_iso,2}, \texorpdfstring{$\mathcal{D}_{\mathrm{iso},12}$}{D\_iso,12})}
+
+For $\mathcal{D}_{\mathrm{iso},1}(\rho) = \sum_{\alpha=1}^3 \big(S_{1\alpha}\rho S_{1\alpha} - \frac{1}{4}\rho\big)$, every traceless Pauli operator on electron~1 is an eigenoperator with eigenvalue $-1$: $\mathcal{D}_{\mathrm{iso},1}(S_{1\beta}) = \frac{1}{4}\sum_\alpha \sigma_\alpha \sigma_\beta \sigma_\alpha - \frac{3}{4}\sigma_\beta = -\sigma_\beta$. Thus $\mathcal{M}_{\mathrm{dark}} = \mathbb{I}_2^{(1)} \otimes \mathcal{B}(\mathcal{H}_2 \otimes \mathcal{H}_{\mathrm{nuc}})$ and $\mathcal{D}_B = -\mathbb{I}_B$. Decomposing $\PS = \frac{1}{4}\mathbb{I} - \mathbf{S}_1\cdot\mathbf{S}_2$, the $\frac{1}{4}\mathbb{I}$ piece lies in $\mathcal{M}_{\mathrm{dark}}$ (giving the $\theta$-independent baseline $\frac{1}{4}$), while the traceless spin-correlation part $-\mathbf{S}_1\cdot\mathbf{S}_2$ lies strictly inside $\mathcal{M}_{\mathrm{bright}}$ ($\rho_{0,B} = -\frac{1}{d_I}\mathbf{S}_1\cdot\mathbf{S}_2$).
+
+Under symmetric recombination ($k_S = k_T = k$), solving Eq.~\eqref{eq:S3_blocks} for $\bar{\rho}_B$ gives
+\[
+\Phi_S(\theta) - \frac{1}{4} = k\langle Q_B\PS, (-E(\gamma))^{-1}\rho_{0,B}\rangle
++ k\langle Q_B\PS, E(\gamma)^{-1} C (-\mathcal{L}_{\mathrm{eff}}(\gamma))^{-1} B E(\gamma)^{-1}\rho_{0,B}\rangle.
+\]
+The purely bright resolvent term $(-E(\gamma))^{-1}\rho_{0,B}$ collapses as $\Theta(\gamma^{-5})$ by the same $M_0/M_2$ commutator cancellation as Channel~1. For the dark-mediated bridge term, expanding $E(\gamma)^{-1} = -\gamma^{-1}\mathbb{I}_B - \gamma^{-2}\mathcal{L}_{BB} - \cdots$ uncovers an exact parity selection rule:
+\begin{enumerate}[label=(\roman*),leftmargin=1.8em,itemsep=1pt]
+\item \emph{Single-step dark decoupling:} $B \rho_{0,B} = P_D \mathcal{L}_0 Q_B \rho_0 = 0$ identically; symmetrically, $(Q_B\PS)^\dagger C = (Q_B\PS)^\dagger \mathcal{L}_0 P_D = 0$ (verified on $8\times 8$ to $7.9\times 10^{-17}$). Indeed, $\ad_{\HZ}$, $\ad_{\Hex}$, and $\ad_{\Hdip}$ preserve $\rho_{0,B} \propto \mathbf{S}_1\cdot\mathbf{S}_2$ up to $\mathbf{S}_1\times\mathbf{S}_2$ or vanish, while $[\HHF, \mathbf{S}_1\cdot\mathbf{S}_2] = \sum_{k,\alpha,\beta,\gamma} A^{(k)}_{\alpha\beta}\ii\epsilon_{\alpha\gamma\eta} S_{1\eta}S_{2\gamma} I_{k,\beta}$ remains strictly linear in the traceless operators $S_{1\eta}$ and hence strictly orthogonal to $\mathcal{M}_{\mathrm{dark}}$.
+\item \emph{Two-step bright-to-dark injection ($O(\gamma^{-2})$):} Applying $\mathcal{L}_0$ a second time multiplies two electron-1 spin operators via $S_{1\alpha}S_{1\alpha'} = \frac{1}{4}\delta_{\alpha\alpha'}\mathbb{I}_2^{(1)} + \frac{\ii}{2}\epsilon_{\alpha\alpha'\gamma}S_{1\gamma}$; paired with non-commuting nuclear operators $[I_\beta, I_{\beta'}] \neq 0$, the scalar $\frac{1}{4}\mathbb{I}_2^{(1)}$ piece projects nontrivially into $\mathcal{M}_{\mathrm{dark}}$: $v_{\mathrm{in}} := -B \mathcal{L}_{BB} \rho_{0,B} = -P_D \mathcal{L}_0 Q_B \mathcal{L}_0 Q_B \rho_0 \neq 0$ (norm $0.73117$ on $8\times 8$). Thus $B E(\gamma)^{-1}\rho_{0,B} = \gamma^{-2} v_{\mathrm{in}} + O(\gamma^{-3})$.
+\item \emph{Dark propagation ($O(\gamma^0)$) and two-step return ($O(\gamma^{-2})$):} Inside $\mathcal{M}_{\mathrm{dark}}$, electron~2 precesses freely under $\omega_L\hat{\mathbf{b}}\cdot\mathbf{S}_2$ via the $O(\gamma^0)$ dark propagator $(-A(\theta))^{-1} = (-P_D\mathcal{L}_0(\theta)P_D)^{-1}$. Symmetrically, returning to $Q_B\PS$ requires two bright steps, $(Q_B\PS)^\dagger E(\gamma)^{-1} C = \gamma^{-2} w_{\mathrm{out}}^\dagger + O(\gamma^{-3})$ with $w_{\mathrm{out}}^\dagger := -(Q_B\PS)^\dagger \mathcal{L}_{BB} C$.
+\end{enumerate}
+Combining both $\gamma^{-2}$ bright barriers yields the exact four-bright-step Feshbach--Schur cascade:
+\begin{equation}
+\label{eq:S3_iso1_exact}
+\DeltaPhi^{\mathrm{iso},1}(\theta) = \frac{k}{\gamma^4}\,\Delta_\theta\Bigl\langle Q_B\PS,\; \mathcal{L}_0 Q_B \mathcal{L}_0 P_D \bigl(-A(\theta)\bigr)^{-1} P_D \mathcal{L}_0 Q_B \mathcal{L}_0 Q_B \rho_0 \Bigr\rangle + O(\gamma^{-5}) = \Theta(\xi^{-4}).
+\end{equation}
+On the canonical $8\times 8$ system, Eq.~\eqref{eq:S3_iso1_exact} evaluates analytically to $-0.1638851\,\xi^{-4}$, matching the exact 45-digit Liouvillian value $-0.1640997\,\xi^{-4}$ at $\xi = 10^4$ to $0.13\%$! (Lean~4 Theorem~\leanid{local\_iso\_dark\_xi4} formalizes a reduced rational-block surrogate exhibiting $\Theta(\xi^{-4})$ scaling.)
+When instead isotropic noise acts only on the hyperfine-free electron~2 ($\mathcal{D}_{\mathrm{iso},2}$, with $e_k = 1\;\forall k$): if $J_{\mathrm{ex}} = 0$ and $\Hdip = 0$, no Hamiltonian term couples electron~2 to the nuclei or electron~1, so $\mathcal{M}_{\mathrm{dark}} = \mathcal{B}(\mathcal{H}_1\otimes\mathcal{H}_{\mathrm{nuc}})\otimes\mathbb{I}_2^{(2)}$ decouples identically from $\mathbf{S}_1\cdot\mathbf{S}_2$ at every order, restoring $\Theta(\xi^{-5})$ ($\alpha = 4.9902$). Turning on $J_{\mathrm{ex}} = 0.15$ re-opens the four-step bridge through $\mathcal{M}_{\mathrm{dark}}$, causing a second sign reversal between $\xi = 100$ ($-3.006\times 10^{-10}$) and $\xi = 215.44$ ($+1.356\times 10^{-13}$) before locking onto $\Theta(\xi^{-4})$ (post-reversal slope $3.9032$ on $[10^3, 10^4]$, $3.9238 \to 3.9661$ on consecutive intervals). When both radicals relax isotropically ($\mathcal{D}_{\mathrm{iso},12}$), $\mathcal{M}_{\mathrm{dark}} = \mathbb{I}_4^{(e)} \otimes \mathcal{B}(\mathcal{H}_{\mathrm{nuc}})$ contains no electronic spin operators, eliminating electron Zeeman precession inside $\mathcal{M}_{\mathrm{dark}}$ and restoring $\Theta(\xi^{-5})$.
+
+\subsection{Channel 4: Uniaxial Dephasing (\texorpdfstring{$\mathcal{D}_{z,12}$}{D\_z,12} vs.\ Closed-Form \texorpdfstring{$\mathcal{D}_{z,1}$}{D\_z,1} Saturation Formula)}
+
+\textbf{Two-radical uniaxial dephasing ($\mathcal{D}_{z,12} = \mathcal{D}[S_{1z}] + \mathcal{D}[S_{2z}]$):} Here $\mathcal{M}_{\mathrm{dark}} = \mathrm{span}\{\mathbb{I}, S_{1z}, S_{2z}, S_{1z}S_{2z}\} \otimes \mathcal{B}(\mathcal{H}_{\mathrm{nuc}})$ contains the Ising correlation $S_{1z}S_{2z}$ (which overlaps $\PS = \frac{1}{4}\mathbb{I} - S_{1z}S_{2z} - S_{1x}S_{2x} - S_{1y}S_{2y}$). At $\theta = 0^\circ$ ($\hat{\mathbf{b}} = \hat{\mathbf{z}}$), $\HZ(0) = \omega_L(S_{1z}+S_{2z})$ commutes with $S_{1z}S_{2z}$, so $\HZ$ introduces zero leakage out of $\mathcal{M}_{\mathrm{dark}}$. For $\theta \neq 0^\circ$, the transverse Zeeman field $\omega_L\sin\theta(S_{1x}+S_{2x})$ couples $S_{1z}S_{2z}$ directly into bright $x,y$ coherences ($S_{1y}S_{2z}$, $S_{1z}S_{2y}$) at first order, generating a Schur decay rate $v^2/\gamma = O(\omega_L^2 \sin^2\theta / \gamma)$ in $\mathcal{L}_{\mathrm{eff}}$ and hence $\DeltaPhi = \Theta(\xi^{-1})$ (Lean~4 Theorem~\leanid{local\_z\_leak\_xi1}).
+
+\textbf{Single-radical uniaxial dephasing ($\mathcal{D}_{z,1} = \mathcal{D}[S_{1z}]$) --- Exact Closed-Form Proof of Eq.~(19):}
+\begin{proposition}[Exact $\xi \to \infty$ Saturation Plateau under Single-Radical Uniaxial Noise $\mathcal{D}_{z,1}$]
+\label{prop:S3_z1_sat}
+Consider a reference-probe radical pair with nuclear hyperfine couplings attached exclusively to electron~1 ($e_k = 1\;\forall k$), zero dipolar coupling ($\Hdip = 0$), isotropic exchange $H_{\mathrm{ex}} = -J_{\mathrm{ex}}(2\mathbf{S}_1\cdot\mathbf{S}_2 + \frac{1}{2}\mathbb{I})$, symmetric Haberkorn rate $k_S = k_T = k > 0$, and strong uniaxial dephasing $\gamma\mathcal{D}[S_{1z}]$ on electron~1 ($\xi = \gamma/k \to \infty$). Then
+\begin{equation}
+\label{eq:S3_z1_limit}
+\lim_{\xi\to\infty}\Phi_S(\theta) = \frac{1}{4} + \frac{1}{4}\,\frac{k^2 + (\omega_L\cos\theta)^2 + J_{\mathrm{ex}}^2}{k^2 + \omega_L^2 + J_{\mathrm{ex}}^2 + 2\omega_L J_{\mathrm{ex}}\cos\theta\,\text{(cancels on }\pm\text{)}}
+\;\Longrightarrow\;
+\lim_{\xi\to\infty}\big[\Phi_S(0^\circ) - \Phi_S(90^\circ)\big] = \frac{\omega_L^2}{4(k^2 + \omega_L^2 + J_{\mathrm{ex}}^2)}.
+\end{equation}
+\end{proposition}
+\begin{proof}
+Because $\mathcal{D}[S_{1z}]$ annihilates all operators diagonal in the $S_{1z} = \pm\frac{1}{2}$ basis ($|{\uparrow_1}\rangle\langle{\uparrow_1}|$ and $|{\downarrow_1}\rangle\langle{\downarrow_1}|$) while damping all $S_{1x}, S_{1y}$ off-diagonal blocks at rate $\frac{\gamma}{2} \to \infty$, projecting $\rho_0 = \PS/d_I$ onto $\mathcal{M}_{\mathrm{dark}} = \bigoplus_{m_1=\pm 1/2} |m_1\rangle\langle m_1| \otimes \mathcal{B}(\mathcal{H}_2 \otimes \mathcal{H}_{\mathrm{nuc}})$ yields
+\[
+P_D(\rho_0) = \frac{1}{d_I}\left(\frac{1}{4}\mathbb{I} - S_{1z}S_{2z}\right)
+= \frac{1}{2d_I}\Big(|{\uparrow_1}\rangle\langle{\uparrow_1}| \otimes |{\downarrow_2}\rangle\langle{\downarrow_2}| + |{\downarrow_1}\rangle\langle{\downarrow_1}| \otimes |{\uparrow_2}\rangle\langle{\uparrow_2}|\Big) \otimes \mathbb{I}_{\mathrm{nuc}}.
+\]
+As $\gamma \to \infty$, the Schur term $-B E(\gamma)^{-1} C = O(\gamma^{-1}) \to 0$, so the exact $\xi\to\infty$ dynamics inside $\mathcal{M}_{\mathrm{dark}}$ is governed solely by the projected Hamiltonian $P_D \HRP P_D = \sum_{m_1=\pm 1/2} |m_1\rangle\langle m_1| \otimes H_{\mathrm{eff}}^{(m_1)}(\theta)$, where
+\[
+H_{\mathrm{eff}}^{(m_1)}(\theta) = \omega_L \hat{\mathbf{b}}\cdot\mathbf{S}_2 - 2 m_1 J_{\mathrm{ex}} S_{2z} + H_{\mathrm{nuc}}^{(m_1)},
+\]
+with $H_{\mathrm{nuc}}^{(m_1)}$ acting purely on $\mathcal{H}_{\mathrm{nuc}}$ (hence commuting identically with $\mathbf{S}_2$ and leaving $\mathbb{I}_{\mathrm{nuc}}/d_I$ invariant!). Thus the two $m_1 = \pm\frac{1}{2}$ sectors reduce to independent single-qubit Bloch precessions of electron~2 initialized in $S_{2z} = -m_1$ under effective magnetic field $\boldsymbol{\Omega}_\pm(\theta) = (\omega_L\sin\theta, 0, \omega_L\cos\theta \mp J_{\mathrm{ex}})$ with squared magnitude $\Omega_\pm^2 = \omega_L^2 + J_{\mathrm{ex}}^2 \mp 2\omega_L J_{\mathrm{ex}}\cos\theta$. For a spin-$1/2$ initialized along $\hat{\mathbf{z}}$ precessing in field $\boldsymbol{\Omega}$ with exponential decay rate $k$, the exact Laplace-averaged $z$-projection equals
+\[
+k\int_0^\infty \ee^{-kt}\,\langle 2 S_{2z}(t)\rangle\,\dd t
+= \frac{k^2 + \Omega_z^2}{k^2 + \|\boldsymbol{\Omega}\|_2^2}.
+\]
+Averaging $P_D(\PS) = \frac{1}{4}\mathbb{I} - S_{1z}S_{2z}$ over $m_1 = \pm\frac{1}{2}$ gives the exact closed-form angular profile:
+\begin{equation}
+\label{eq:S3_z1_theta}
+\Phi_S^{\mathcal{D}_{z,1},\infty}(\theta)
+= \frac{1}{4} + \frac{1}{8}\sum_{s=\pm 1} \frac{k^2 + (\omega_L\cos\theta - s J_{\mathrm{ex}})^2}{k^2 + \omega_L^2 + J_{\mathrm{ex}}^2 - 2 s \omega_L J_{\mathrm{ex}}\cos\theta}.
+\end{equation}
+Evaluating at $\theta = 0^\circ$ gives $\Omega_{z,\pm}^2 = (\omega_L \mp J_{\mathrm{ex}})^2 = \Omega_\pm^2$, so each fraction equals $1$ and $\Phi_S^{\mathcal{D}_{z,1},\infty}(0^\circ) = \frac{1}{4} + \frac{1}{4} = \frac{1}{2}$ identically! Evaluating at $\theta = 90^\circ$ ($\cos\theta = 0$) gives $\Omega_{z,\pm}^2 = J_{\mathrm{ex}}^2$ and $\Omega_\pm^2 = \omega_L^2 + J_{\mathrm{ex}}^2$, so $\Phi_S^{\mathcal{D}_{z,1},\infty}(90^\circ) = \frac{1}{4} + \frac{k^2 + J_{\mathrm{ex}}^2}{4(k^2+\omega_L^2+J_{\mathrm{ex}}^2)}$. Subtracting yields Eq.~(17) of the main text:
+\[
+\Phi_S^{\mathcal{D}_{z,1},\infty}(0^\circ) - \Phi_S^{\mathcal{D}_{z,1},\infty}(90^\circ)
+= \frac{1}{4}\left(1 - \frac{k^2 + J_{\mathrm{ex}}^2}{k^2 + \omega_L^2 + J_{\mathrm{ex}}^2}\right)
+= \frac{\omega_L^2}{4(k^2 + \omega_L^2 + J_{\mathrm{ex}}^2)}. \qedhere
+\]
+\end{proof}
+Notice the remarkable physical insight: Eq.~\eqref{eq:S3_z1_theta} is \emph{completely independent} of the nuclear hyperfine architecture $\{I_k, \mathbf{A}_k\}$ on electron~1! That is why $8\times 8$ ($I=1/2$) and $12\times 12$ ($I=1$) both converge to $0.164292$ at $\omega_L = 1.40, J_{\mathrm{ex}} = 0.15, k = 1.0$, and $36\times 36$ $50\,\mu\text{T}$ $\mathrm{FAD}^{\bullet-}$ ($\omega_L = 8.804298, J_{\mathrm{ex}} = 0, k = 1.0$) converges to $0.246816$.
+
+\subsection{Channel 5: Asymmetric Haberkorn Recombination (\texorpdfstring{$k_S \neq k_T$}{k\_S != k\_T}) and Exact Trace Conservation}
+
+Under general Haberkorn recombination with non-Hermitian effective Hamiltonian $H_{\mathrm{eff}} := \HRP - \frac{\ii k_S}{2}\PS - \frac{\ii k_T}{2}\PT$ and any trace-preserving Lindblad dissipator $\mathcal{D}_{\mathrm{ch}}$ ($\Tr[\mathcal{D}_{\mathrm{ch}}(X)] = 0$), the master equation reads $\dot{\rho} = \mathcal{L}_{\mathrm{tot}}(\rho) = -\ii(H_{\mathrm{eff}}\rho - \rho H_{\mathrm{eff}}^\dagger) + \gamma\mathcal{D}_{\mathrm{ch}}(\rho)$. Taking the trace yields
+\[
+\frac{\dd}{\dd t}\Tr[\rho(t)] = -\Tr\big[(k_S \PS + k_T \PT)\rho(t)\big] = -k_S p_S(t) - k_T p_T(t).
+\]
+Integrating from $t = 0$ ($\Tr[\rho(0)] = 1$) to $t = \infty$ ($\rho(\infty) = 0$ since $k_S, k_T > 0$) proves exact probability conservation:
+\begin{equation}
+\label{eq:S3_haberkorn_cons}
+\Phi_S + \Phi_T = \int_0^\infty \big(k_S p_S(t) + k_T p_T(t)\big)\,\dd t = -\int_0^\infty \frac{\dd}{\dd t}\Tr[\rho(t)]\,\dd t = \Tr[\rho(0)] = 1.
+\end{equation}
+For global depolarization $\mathcal{D}_{\mathrm{dep}}(\rho) = \frac{\Tr(\rho)}{D}\mathbb{I} - \rho$, notice that the resolvent operator $(-\mathcal{L}_{\mathrm{tot}})^{-1}$ is a \emph{rank-1 perturbation} of the decoupled $H_{\mathrm{eff}}$ superoperator $\mathcal{L}_{\mathrm{eff},0}(\rho) := -\ii(H_{\mathrm{eff}}\rho - \rho H_{\mathrm{eff}}^\dagger) - \gamma\rho$:
+\[
+-\mathcal{L}_{\mathrm{tot}}(\rho) = (-\mathcal{L}_{\mathrm{eff},0})(\rho) - \frac{\gamma}{D}\mathbb{I}\,\Tr(\rho).
+\]
+Diagonalizing $H_{\mathrm{eff}} = \sum_a \varepsilon_a |R_a\rangle\langle L_a|$ biorthogonally ($\langle L_a | R_b \rangle = \delta_{ab}$) gives $(-\mathcal{L}_{\mathrm{eff},0})^{-1}(X) = \sum_{a,b} \frac{\langle L_a|X|L_b\rangle}{\gamma + \ii(\varepsilon_a - \bar{\varepsilon}_b)} |R_a\rangle\langle R_b|$. Applying the Sherman--Morrison rank-1 formula yields an independent closed-form spectral cross-check for $\Phi_S(k_S, k_T, \gamma)$, which agrees with native 45-digit split-operator Liouville inversion to $< 2.23 \times 10^{-15}$ across $k_T/k_S \in \{0.1, 1.0, 5.0, 10.0\}$ while maintaining $\max|\Phi_S + \Phi_T - 1| \le 8.2\times 10^{-43}$ across all 17 channel sweeps (up to $\xi = 10^4$).
+
+%==============================================================================
+\section{Positive \texorpdfstring{$K=8$}{K=8} Prony Parameters, ADO Hierarchy Convergence, and Colored-Bath Tables}
+\label{sec:S4}
+%==============================================================================
+
+\subsection{Positive \texorpdfstring{$K=8$}{K=8} Prony/NNLS Kernel Decomposition}
+
+To represent the colored bath autocorrelation $C(t)/\sigma^2 = (1 + t/\tau_c)^{-\mu}$ over dimensionless lag $u = t/\tau_c \in [0, 10^3]$ as a strictly positive sum of exponentials $\sum_{m=1}^K \tilde{c}_m \ee^{-\tilde{\nu}_m u}$ ($\tilde{c}_m > 0$, $\tilde{\nu}_m > 0$, $\sum_m \tilde{c}_m = 1$), we use non-negative least-squares (NNLS) embedded inside variable-projection optimization over log-spaced decay rates $\{\tilde{\nu}_m\}$. Table~\ref{tab:S4_prony} records all $K=8$ positive parameters for $\mu \in \{0.40, 0.50, 0.70, 0.85\}$ from \texttt{verify\_03\_microscopic\_ado\_and\_mc.json}.
+
+\begin{table}[htbp]
+\centering
+\caption{Exact positive $K=8$ Prony/NNLS parameters $(\tilde{c}_m, \tilde{\nu}_m)$ fitting $(1+u)^{-\mu}$ across $u = t/\tau_c \in [0, 10^3]$, together with maximum relative error and IR-regularized integrated correlation ratio $\tau_{\mathrm{int}}/\tau_c = \sum_{m=1}^8 \tilde{c}_m/\tilde{\nu}_m$.}
+\label{tab:S4_prony}
+\setlength{\tabcolsep}{5pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c|cc|cc|cc|cc@{}}
+\toprule
+& \multicolumn{2}{c|}{$\mu = 0.40$ (err $0.0248\%$)} & \multicolumn{2}{c|}{$\mu = 0.50$ (err $0.0363\%$)} & \multicolumn{2}{c|}{$\mu = 0.70$ (err $0.226\%$)} & \multicolumn{2}{c}{$\mu = 0.85$ (err $0.694\%$)} \\
+$m$ & $\tilde{c}_m$ & $\tilde{\nu}_m$ & $\tilde{c}_m$ & $\tilde{\nu}_m$ & $\tilde{c}_m$ & $\tilde{\nu}_m$ & $\tilde{c}_m$ & $\tilde{\nu}_m$ \\
+\midrule
+$1$ & $0.052591$ & $2.591423$ & $0.069185$ & $2.642463$ & $0.094670$ & $2.859539$ & $0.105654$ & $3.093810$ \\
+$2$ & $0.179985$ & $0.915284$ & $0.220305$ & $0.936804$ & $0.278452$ & $1.046611$ & $0.305971$ & $1.173578$ \\
+$3$ & $0.215443$ & $0.325281$ & $0.241296$ & $0.334088$ & $0.269082$ & $0.385694$ & $0.280105$ & $0.448598$ \\
+$4$ & $0.176237$ & $0.115087$ & $0.179129$ & $0.118598$ & $0.171282$ & $0.141352$ & $0.164497$ & $0.169997$ \\
+$5$ & $0.126798$ & $0.040382$ & $0.116392$ & $0.041782$ & $0.094067$ & $0.051198$ & $0.081986$ & $0.062830$ \\
+$6$ & $0.090932$ & $0.013606$ & $0.074760$ & $0.014185$ & $0.050155$ & $0.017668$ & $0.038172$ & $0.021596$ \\
+$7$ & $0.074439$ & $0.003730$ & $0.053360$ & $0.003987$ & $0.027504$ & $0.005084$ & $0.016945$ & $0.006184$ \\
+$8$ & $0.083574$ & $0.0003105$ & $0.045573$ & $0.0003981$ & $0.014788$ & $0.0006462$ & $0.006670$ & $0.0008819$ \\
+\midrule
+$\tau_{\mathrm{int}}/\tau_c$ & \multicolumn{2}{c|}{$301.378$} & \multicolumn{2}{c|}{$138.399$} & \multicolumn{2}{c|}{$35.179$} & \multicolumn{2}{c}{$15.263$} \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\subsection{Tanimura--Kubo ADO Equations and Convergence Audit}
+
+For independent classical Gaussian stochastic fields $\delta B_\alpha(t)$ ($\alpha \in \mathcal{A}$, where $\mathcal{A} = \{z\}$ for uniaxial noise and $\mathcal{A} = \{x,y,z\}$ for 3D isotropic noise) with positive multi-exponential autocorrelation $C(t) = \sum_{m=1}^K c_m \ee^{-\nu_m t}$ ($c_m = \sigma^2 \tilde{c}_m$, $\nu_m = \tilde{\nu}_m/\tau_c$), the exact ensemble-averaged density matrix $\rho_{\mathbf{0}}(t)$ satisfies the Tanimura--Kubo Auxiliary Density Operator (ADO) hierarchy indexed by multi-indices $\mathbf{n} = (n_{\alpha,m}) \in \mathbb{Z}_{\ge 0}^{|\mathcal{A}| K}$:
+\begin{align}
+\label{eq:S4_ado}
+\frac{\dd}{\dd t}\rho_{\mathbf{n}}(t)
+&= \left(\mathcal{L}_0 - \sum_{\alpha\in\mathcal{A}}\sum_{m=1}^K n_{\alpha,m}\nu_m\right)\rho_{\mathbf{n}}(t) \nonumber\\
+&\quad - \ii \sum_{\alpha\in\mathcal{A}}\sum_{m=1}^K \sqrt{(n_{\alpha,m}+1)c_m}\,[S_{1\alpha}, \rho_{\mathbf{n}+\mathbf{e}_{\alpha,m}}(t)]
+- \ii \sum_{\alpha\in\mathcal{A}}\sum_{m=1}^K \sqrt{n_{\alpha,m} c_m}\,[S_{1\alpha}, \rho_{\mathbf{n}-\mathbf{e}_{\alpha,m}}(t)].
+\end{align}
+Under symmetric Haberkorn recombination ($k_S = k_T = k$), integrating Eq.~\eqref{eq:S4_ado} from $t=0$ ($\rho_{\mathbf{0}}(0) = \PS/d_I$, $\rho_{\mathbf{n}\neq\mathbf{0}}(0) = 0$) to $\infty$ yields a sparse block-linear system directly for the Laplace-integrated ADOs $\bar{\rho}_{\mathbf{n}} = \int_0^\infty \rho_{\mathbf{n}}(t)\,\dd t$, solved via block-diagonal-preconditioned GMRES on priority-ranked multi-index sets of size $N_{\mathrm{ADO}}$ (prioritized by coupling weight $\prod_{\alpha,m} (c_m/\nu_m^2)^{n_{\alpha,m}}/n_{\alpha,m}!$). Table~\ref{tab:S4_ado_conv} reports the complete convergence audit across $N_{\mathrm{ADO}} \in [200, 2500]$ and independent OU--MC ensembles.
+
+\begin{table}[htbp]
+\centering
+\caption{Tanimura--Kubo ADO truncation convergence audit vs.\ independent stochastic OU--MC ensembles ($\mu = 0.50$, canonical $8\times 8$ system; all GMRES solves converged with exit status $0$).}
+\label{tab:S4_ado_conv}
+\setlength{\tabcolsep}{4.5pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lccccccc@{}}
+\toprule
+Regime & $(\tau_c, \sigma, \gamma_{\mathrm{eff}})$ & Method & $N_{\mathrm{ADO}}$ / $N_{\mathrm{traj}}$ & $\Phi_S(0^\circ)$ & $\Phi_S(90^\circ)$ & $\DeltaPhi$ & Deviation vs.\ OU--MC \\
+\midrule
+Uniaxial $S_{1z}$ fast & $(0.005, 1.5, 3.114)$ & ADO & $200$  & $0.578460$ & $0.510272$ & $+0.068188$ & --- \\
+& & ADO & $600$  & $0.578460$ & $0.510273$ & $+0.068188$ & --- \\
+& & ADO & $1500$ & $0.578460$ & $0.510273$ & $+0.068188$ & $+0.54\sigma$ \\
+& & OU--MC & $1000$ & $0.578780(83)$ & $0.510923(105)$ & $+0.067857(62)$ & ref \\
+\midrule
+Uniaxial $S_{1z}$ mod.\ & $(0.05, 3.0, 124.56)$ & ADO & $200$  & $0.619329$ & $0.559822$ & $+0.059507$ & --- \\
+& & ADO & $600$  & $0.624244$ & $0.556788$ & $+0.067456$ & --- \\
+& & ADO & $1500$ & $0.620184$ & $0.550979$ & $+0.069205$ & --- \\
+& & ADO & $2500$ & $0.620054$ & $0.550859$ & $+0.069195$ & $+0.78\sigma$ \\
+& & OU--MC & $1200$ & $0.624048(265)$ & $0.555747(256)$ & $+0.068301(114)$ & ref \\
+\midrule
+3D isotropic fast & $(0.005, 1.5, 3.114)$ & ADO & $400$  & $0.535733$ & $0.494273$ & $+0.041460$ & --- \\
+& & ADO & $1200$ & $0.535179$ & $0.494165$ & $+0.041014$ & --- \\
+& & ADO & $2500$ & $0.535221$ & $0.494167$ & $+0.041054$ & $+0.83\sigma$ \\
+& & OU--MC & $1600$ & $0.535920(90)$ & $0.495558(89)$ & $+0.040363(83)$ & ref \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\subsection{Complete Protocol A, B, and C Tables and Exact SU(2) Strang-Split Unraveling}
+
+Tables~\ref{tab:S4_protA} and~\ref{tab:S4_protBC} record the complete canonical $8\times 8$ Protocol~A, B, and C datasets (combining 45-digit \texttt{mpmath} Markov values from \leanid{verify\_05\_supplement\_checks.json} with ADO/OU--MC data from \leanid{verify\_03\_microscopic\_ado\_and\_mc.json}).
+
+\begin{table}[htbp]
+\centering
+\caption{Complete Protocol~A dataset (fixed RMS $\sigma = 3.0\,\mu\text{s}^{-1}$, canonical $8\times 8$ system): 45-digit rate-matched Markovian $\mathcal{D}_{\mathrm{iso},1}$, deterministic 3D-ADO ($N_{\mathrm{ADO}}=1800$), 3D-$1/f^{0.5}$ ($\mu=0.50$) OU--MC, 3D-$1/f^{0.15}$ ($\mu=0.85$) OU--MC, matched single-mode OU1 (identical $\sigma, \tau_{\mathrm{int}}$ to $\mu=0.50$), and uniaxial $S_{1z}$ $1/f^{0.5}$ OU--MC.}
+\label{tab:S4_protA}
+\setlength{\tabcolsep}{4.5pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}cccccccc@{}}
+\toprule
+$\tau_c$ ($\mu$s) & $\gamma_{\mathrm{eff}}$ ($\mu\text{s}^{-1}$) & $\Delta\Phi_{S,\mathrm{Markov}}$ (45d) & 3D-ADO ($1/f^{0.5}$) & 3D-$1/f^{0.5}$ (OU--MC) & 3D-OU1 (matched) & 3D-$1/f^{0.15}$ ($\mu=0.85$) & Uniaxial $S_{1z}$ ($1/f^{0.5}$) \\
+\midrule
+$0.001$ & $2.491$   & $-1.258\times 10^{-3}$  & $+0.02619$ & $+0.02617(119)$ & $+0.00006(151)$ & $+0.05162(72)$  & $+0.06524(87)$ \\
+$0.003$ & $7.474$   & $-8.490\times 10^{-5}$  & $+0.01764$ & $+0.01828(124)$ & $+0.00592(141)$ & $+0.03500(113)$ & $+0.06322(108)$ \\
+$0.010$ & $24.91$   & $-6.314\times 10^{-7}$  & ---        & $+0.00896(135)$ & $+0.01041(146)$ & $+0.01638(131)$ & $+0.06454(123)$ \\
+$0.030$ & $74.74$   & $-6.181\times 10^{-9}$  & ---        & $+0.00839(141)$ & $+0.01382(126)$ & $+0.00887(150)$ & $+0.06618(124)$ \\
+$0.100$ & $249.1$   & $-4.480\times 10^{-11}$ & ---        & $+0.00751(150)$ & $+0.01649(113)$ & $+0.00479(146)$ & $+0.07127(133)$ \\
+$0.300$ & $747.4$   & $-5.346\times 10^{-13}$ & ---        & $+0.00866(131)$ & $+0.01604(105)$ & $+0.00806(149)$ & $+0.07176(147)$ \\
+$1.000$ & $2491$    & $-4.278\times 10^{-15}$ & ---        & $+0.01188(145)$ & $+0.01512(97)$  & $+0.01034(146)$ & $+0.07465(158)$ \\
+$3.000$ & $7473.5$  & $-5.263\times 10^{-17}$ & ---        & $+0.01244(118)$ & $+0.01402(91)$  & $+0.01313(132)$ & $+0.07139(147)$ \\
+$10.00$ & $24912$   & $-4.257\times 10^{-19}$ & ---        & $+0.01463(97)$  & $+0.01482(97)$  & $+0.01629(114)$ & $+0.06626(143)$ \\
+$30.00$ & $74735$   & $-5.254\times 10^{-21}$ & ---        & $+0.01526(93)$  & $+0.01672(99)$  & $+0.01399(100)$ & $+0.06295(151)$ \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Complete Protocol~B (fixed $\gamma_{\mathrm{eff}} = 10.0\,\mu\text{s}^{-1}$, Markovian baseline $-2.816\times 10^{-5}$, coherent limit $+0.07664$) and Protocol~C ($\sigma$-sweep at fixed $\tau_c = 0.2\,\mu\text{s}$, slow $\tau_c = 5.0\,\mu\text{s}$, and exact static 3D Gaussian quadrature $\tau_c \to \infty$) datasets in the canonical $8\times 8$ system.}
+\label{tab:S4_protBC}
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}cccc|ccccc@{}}
+\toprule
+\multicolumn{4}{c|}{Protocol B (fixed $\gamma_{\mathrm{eff}}=10.0$)} & \multicolumn{5}{c}{Protocol C ($\sigma$-sweep, $\mu=0.50$)} \\
+$\tau_c$ ($\mu$s) & $\sigma$ ($\mu\text{s}^{-1}$) & $\Delta\Phi_{S,1/f^{0.5}}$ & Ratio/Markov & $\sigma$ ($\mu\text{s}^{-1}$) & $\Delta\Phi_{S,\mathrm{Markov}}$ (45d) & 3D ($\tau_c=0.2$) & 3D ($\tau_c=5.0$) & Static 3D Gauss \\
+\midrule
+$0.001$ & $6.011$ & $+0.00712(139)$ & $253\times$  & $0.3$ & $-3.231\times 10^{-4}$  & $+0.06977(24)$  & ---            & $+0.06818$ \\
+$0.005$ & $2.688$ & $+0.01736(129)$ & $617\times$  & $0.7$ & $-4.395\times 10^{-7}$  & $+0.04943(75)$  & ---            & $+0.05159$ \\
+$0.020$ & $1.344$ & $+0.03435(108)$ & $1220\times$ & $1.0$ & ---                     & ---             & $+0.04476(76)$ & --- \\
+$0.100$ & $0.601$ & $+0.05657(61)$  & $2009\times$ & $1.5$ & $-7.531\times 10^{-10}$ & $+0.02604(112)$ & ---            & $+0.03672$ \\
+$0.500$ & $0.269$ & $+0.07018(24)$  & $2492\times$ & $2.0$ & ---                     & ---             & $+0.02648(123)$ & --- \\
+$2.000$ & $0.134$ & $+0.07468(8)$   & $2652\times$ & $3.0$ & $-2.730\times 10^{-12}$ & $+0.00862(150)$ & $+0.01454(112)$ & $+0.01563$ \\
+$10.00$ & $0.060$ & $+0.07621(2)$   & $2706\times$ & $5.0$ & ---                     & ---             & $+0.00412(88)$  & --- \\
+---     & ---     & ---             & ---          & $6.0$ & $-1.046\times 10^{-14}$ & $-0.00075(147)$ & ---            & $+0.00449$ \\
+---     & ---     & ---             & ---          & $8.0$ & ---                     & ---             & $+0.00197(69)$  & --- \\
+---     & ---     & ---             & ---          & $12.0$ & $-4.065\times 10^{-17}$ & $-0.00034(127)$ & $+0.00193(66)$  & $+0.00115$ \\
+---     & ---     & ---             & ---          & $24.0$ & $-1.586\times 10^{-19}$ & $+0.00015(116)$ & ---            & $+0.000290$ \\
+---     & ---     & ---             & ---          & $100.0$ & ---                    & ---             & ---            & $+1.670\times 10^{-5}$ \\
+---     & ---     & ---             & ---          & $300.0$ & ---                    & ---             & ---            & $+1.873\times 10^{-6}$ \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\textbf{Exact Integrated-OU Pure-State Unraveling and SU(2) Strang Splitting for $36\times 36$ $50\,\mu\text{T}$ $\mathrm{FAD}^{\bullet-}\text{--}\mathrm{Z}^{\bullet}$:}
+Because $H(t) = \HRP + \delta\mathbf{B}(t)\cdot\mathbf{S}_1$ is Hermitian for each classical Gaussian field realization $\delta\mathbf{B}(t)$, and the initial density matrix decomposes orthogonally into $d_I = 9$ orthonormal singlet basis states $\rho(0) = \frac{1}{9}\sum_{j=1}^9 |S,j\rangle\langle S,j|$, evolving the $36\times 9$ ket block $\Psi(t) = [|\psi_1(t)\rangle, \dots, |\psi_9(t)\rangle]$ directly via $\ii\dot{\Psi}(t) = H(t)\Psi(t)$ and averaging $p_S(t) = \frac{1}{9}\|\Psi_{\mathrm{sing}}^\dagger \Psi(t)\|_F^2$ is mathematically identical to evolving the $36\times 36$ density matrix $\rho(t)$, while reducing per-step complexity by a factor of $4$. Moreover, because $(\mathbf{b}\cdot\mathbf{S}_1)^2 = \frac{1}{4}\|\mathbf{b}\|_2^2\,\mathbb{I}_{36}$, the step-averaged noise propagator using the exact joint Gaussian distribution of $(\eta_m(t+\Delta t), \Delta t^{-1}\!\int_t^{t+\Delta t}\eta_m(s)\,\dd s)$ admits the exact closed-form SU(2) matrix exponential
+\begin{equation}
+\label{eq:S4_su2_exp}
+\exp\!\big(-\ii\,\Delta t\,\bar{\mathbf{b}}\cdot\mathbf{S}_1\big)
+= \cos\!\left(\frac{r\Delta t}{2}\right)\mathbb{I}_{36} - \frac{2\ii}{r}\sin\!\left(\frac{r\Delta t}{2}\right)\big(\bar{\mathbf{b}}\cdot\mathbf{S}_1\big), \qquad r = \|\bar{\mathbf{b}}\|_2,
+\end{equation}
+combined with precomputed static half-step propagators $\ee^{-\ii\HRP\Delta t/2}$ in a BLAS-batched second-order unitary Strang splitting ($\Delta t = 0.001\,\mu\text{s}$, $T_{\max} = 12.0\,\mu\text{s}$ so $\ee^{-k_{\mathrm{rec}}T_{\max}} = 6.1\times 10^{-6}$, common-random-number pairing between $\theta=0^\circ$ and $\theta=90^\circ$ over $N_{\mathrm{traj}} = 200$ realizations; step-halving at the stiffest point $\tau_c = 0.001\,\mu\text{s}$, $\Delta t = 0.0005\,\mu\text{s}$ confirms convergence to $0.10\%$: $+0.19441(132)$ vs.\ $+0.19461(141)$).
+
+%==============================================================================
+\section{Extended Pre-Asymptotic Tail Tables for Physical \texorpdfstring{$50\,\mu\text{T}$ $36\times 36$ $\mathrm{FAD}^{\bullet-}$}{50 uT 36x36 FAD.-}}
+\label{sec:S5}
+%==============================================================================
+
+Table~\ref{tab:S5_fad_tail} records the exact 45-digit iteratively refined extended-tail datasets ($\xi \in [10^4, 3\times 10^6]$) for physical $50\,\mu\text{T}$ $36\times 36$ $^{14}\text{N}_5 + {}^{14}\text{N}_{10}$ $\mathrm{FAD}^{\bullet-}\text{--}\mathrm{Z}^{\bullet}$ (from \leanid{verify\_05\_supplement\_checks.json} and \leanid{verify\_06\_fad50uT\_colored\_and\_dipolar.json}), demonstrating monotonic convergence past the hyperfine crossover $\gamma = A_{\mathrm{N5},\parallel} = 309.38\,\mu\text{s}^{-1}$ and exact invariance of the global Markov $\xi^{-5}$ prefactor under $35^\circ$-tilted point-dipole coupling ($r = 1.870\,\text{nm}$, $d(r) = +50.0\,\text{rad}\,\mu\text{s}^{-1}$, $D_{\mathrm{ZFS}} = -75.0\,\text{rad}\,\mu\text{s}^{-1}$).
+
+\begin{table}[htbp]
+\centering
+\caption{Extended high-$\xi$ signed anisotropy $\DeltaPhi = \Phi_S(0^\circ) - \Phi_S(90^\circ)$ for physical $50\,\mu\text{T}$ $36\times 36$ $\mathrm{FAD}^{\bullet-}\text{--}\mathrm{Z}^{\bullet}$ computed via 45-digit spectral and iteratively refined sparse 1296-dimensional Liouville solves (tilted dipolar column uses $r=1.870\,\text{nm}$, $d(r)=+50.0\,\text{rad}\,\mu\text{s}^{-1}$, $D_{\mathrm{ZFS}}=-75.0\,\text{rad}\,\mu\text{s}^{-1}$).}
+\label{tab:S5_fad_tail}
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}ccccccc@{}}
+\toprule
+$\xi = \gamma/k_{\mathrm{rec}}$ & Global ML ($\mu=0.50$) & Global Markov ($\mu=1$) & Global Markov + Dip.\ ($r=1.87\,\text{nm}$) & STD ($\frac{1}{2}\mathcal{D}[\PS-\PT]$) & Local iso $\mathbf{S}_1$ & Uniaxial $S_{1z}+S_{2z}$ / $S_{1z}$ \\
+\midrule
+$10^4$       & $+1.57433\times 10^{-3}$ & $-2.74497\times 10^{-14}$ & $-2.74491\times 10^{-14}$ & $+1.00009\times 10^{-2}$ & $-9.42366\times 10^{-11}$ & $+6.66993\times 10^{-3}$ / $+0.23183$ \\
+$3\times 10^4$ & $+9.09037\times 10^{-4}$ & $-1.13578\times 10^{-16}$ & ---                       & $+8.66827\times 10^{-3}$ & $-2.42143\times 10^{-12}$ & $+2.45260\times 10^{-3}$ / $+0.24152$ \\
+$10^5$       & $+4.97919\times 10^{-4}$ & $-2.76189\times 10^{-19}$ & $-2.76188\times 10^{-19}$ & $+4.86503\times 10^{-3}$ & $-2.90490\times 10^{-14}$ & $+7.62953\times 10^{-4}$ / $+0.24519$ \\
+$3\times 10^5$ & $+2.87477\times 10^{-4}$ & $-1.13667\times 10^{-21}$ & ---                       & $+1.54911\times 10^{-3}$ & $-4.13512\times 10^{-16}$ & $+2.57017\times 10^{-4}$ / $+0.24627$ \\
+$10^6$       & $+1.57458\times 10^{-4}$ & $-2.76217\times 10^{-24}$ & $-2.76217\times 10^{-24}$ & $+2.42813\times 10^{-4}$ & $-3.53729\times 10^{-18}$ & $+7.73921\times 10^{-5}$ / $+0.24665$ \\
+$3\times 10^6$ & ---                     & ---                       & ---                       & ---                      & $-4.43795\times 10^{-20}$ & --- \\
+\midrule
+Tail slope $\alpha$ & $0.5000$ ($[10^4,10^6]$) & $4.9989$ ($[10^4,10^6]$) & $4.9986$ ($[10^4,10^6]$) & $1.5392$ ($[3{\times}10^5,10^6]$) & $3.9853$ ($[10^6,3{\times}10^6]$) & $0.9969$ / $-0.0013$ \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+%==============================================================================
+\section{Complete Lean 4.16.0 Formal Verification Ledger and Reproducibility Protocol}
+\label{sec:S6}
+%==============================================================================
+
+The self-contained Lean~4.16.0 formalization \leanid{Paper1\_RadicalPair.lean} (5,991 lines, zero Mathlib dependencies, zero \texttt{sorry}/\texttt{admit}, zero \texttt{native\_decide}, zero custom axioms) is organized into four foundational layers (Gaussian rationals \leanid{ZGauss}/\leanid{Q}/\leanid{CQ}, finite Kronecker matrix algebra \leanid{MatCQ}/\leanid{Kron}, $4\times 4$ spin matrices \leanid{SpinMatrices}) supporting four main theorem sections totaling 69 headline theorems across 364 authored public theorems (501 authored total, 560 kernel-audited public \texttt{thmInfo} declarations; \texttt{axioms\_check.txt}, \texttt{DISALLOWED\_AXIOMS=0}):
+\begin{enumerate}[leftmargin=1.8em,itemsep=2pt]
+\item \textbf{\leanid{UnifiedRP} (28 main theorems, lines 2775--3490):} \leanid{PS\_idem}, \leanid{PT\_idem}, \leanid{PS\_PT\_ortho}, \leanid{PS\_add\_PT}, \leanid{PS\_herm}, \leanid{PT\_herm}, \leanid{PS\_trace}, \leanid{PT\_trace}, \leanid{comm\_H\_Z\_PS}, \leanid{comm\_H\_ex\_PS}, \leanid{comm\_H\_HF\_PS}, \leanid{comm\_H\_RP\_PS}, \leanid{M0\_exact}, \leanid{M0\_norm\_one}, \leanid{frobInner\_V4\_Iop}, \leanid{M2\_exact}, \leanid{M2\_norm\_exact}, \leanid{comm\_HZ\_C1\_eq}, \leanid{C2\_Z\_orthog\_int}, \leanid{M4\_diff\_unified}, \leanid{axial\_diff\_quad}, \leanid{PS\_8\_eq\_explicit}, \leanid{PS\_12\_eq\_explicit}, \leanid{M4\_8\_axial\_diff}, \leanid{M4\_12\_axial\_diff}, \leanid{M2\_8\_canonical}, \leanid{M4\_8\_canonical\_90deg}, \leanid{M4\_12\_canonical\_90deg}.
+\item \textbf{\leanid{SymDip4} (3 electronic dipolar theorems):} \leanid{SymDip4\_eq\_half\_sum}, \leanid{comm\_SymDip4\_PS4}, \leanid{v4\_orthog\_SymDip4}.
+\item \textbf{\leanid{MultiRP} (23 arbitrary-$K$-nucleus, arbitrary-attachment $e_k\in\{1,2\}$, and arbitrary symmetric dipolar $\mathbf{D}^\top=\mathbf{D}$ theorems, lines 3867--4800):} \leanid{M0\_multi}, \leanid{comm\_H\_Z\_PS\_multi}, \leanid{comm\_H\_ex\_PS\_multi}, \leanid{comm\_H\_RP\_PS\_multi}, \leanid{M2\_multi\_exact}, \leanid{comm\_HZ\_C1\_multi}, \leanid{C2\_Z\_orthog\_int\_multi}, \leanid{M4\_multi\_diff}, \leanid{M4\_multi\_isotropic\_blindness}, \leanid{FAD\_36x36\_twoN14\_M2}, \leanid{FAD\_36x36\_twoN14\_M4\_axial\_diff}, \leanid{comm\_H\_RP\_PS\_multi\_gen}, \leanid{M2\_multi\_gen}, \leanid{C2\_Z\_orthog\_int\_multi\_gen}, \leanid{M4\_multi\_diff\_gen}, \leanid{FAD\_36x36\_twoN14\_e1e2\_M4\_diff}, \leanid{H\_dip\_eq\_sym}, \leanid{comm\_H\_dip\_PS\_multi}, \leanid{comm\_H\_RP\_PS\_multi\_gen\_dip}, \leanid{M2\_multi\_gen\_dip}, \leanid{C2\_Z\_orthog\_int\_multi\_gen\_dip}, \leanid{M4\_multi\_diff\_gen\_dip}, \leanid{FAD\_36x36\_twoN14\_dipolar\_M4\_diff}.
+\item \textbf{\leanid{StrongNoiseAsymptotics4C} (15 spectral resolvent, Mittag--Leffler ratio, and reduced Feshbach--Schur theorems, lines 4801--5991):} \leanid{lorentz\_resolvent\_identity}, \leanid{laplacePS\_expansion}, \leanid{laplaceRem\_bounds}, \leanid{markov\_contrast\_two\_sided}, \leanid{markov\_xi5\_envelope}, \leanid{markov\_sign\_flip\_guarantee}, \leanid{sign\_flip\_blind\_spot\_witness}, \leanid{ml\_half\_vs\_markov\_xi9\_2}, \leanid{ml\_separation\_general}, \leanid{schur\_complement\_2x2}, \leanid{std\_zeno\_M2\_cancel}, \leanid{std\_zeno\_two\_sided\_xi2}, \leanid{local\_iso\_dark\_xi4}, \leanid{local\_z\_leak\_xi1}, \leanid{local\_z\_single\_sat\_xi0}.
+\end{enumerate}
+
+\textbf{Reproducibility Commands:} From the unzipped submission archive root:
+{\small
+\begin{verbatim}
+cd lean_proofs && lake build DiamondProofs.Paper1_RadicalPair
+python3 src/verify_01_hamiltonians_and_moments.py
+python3 src/verify_02_five_channel_liouville.py
+python3 src/verify_03_microscopic_ado_and_mc.py
+python3 src/verify_04_curves_and_tables.py
+python3 src/verify_05_supplement_checks.py
+python3 src/verify_06_fad50uT_colored_and_dipolar.py
+python3 src/generate_figures.py
+tectonic paper1_radical_pair.tex && tectonic supplement_paper1.tex
+\end{verbatim}
+}
+
+\end{document}

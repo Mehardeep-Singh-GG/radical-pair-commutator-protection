@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+title: "Fourth-Moment Commutator Protection, Five-Channel Liouvillian Scaling, and Non-Commuting Colored-Bath Dynamics in Radical-Pair Magnetoreception"
+message: "If you use the Lean 4 formalization, numerical solvers, or datasets from this repository, please cite this work."
+type: software
+authors:
+  - family-names: "Singh"
+    given-names: "Mehardeep"
+    affiliation: "Sri Chaitanya Educational Institutions"
+    email: "mehardeep.sim@gmail.com"
+version: "1.0.0"
+date-released: "2026-11-21"
+license: "MIT"
+repository-code: "https://github.com/Mehardeep-Singh-GG/radical-pair-commutator-protection"
+url: "https://github.com/Mehardeep-Singh-GG/radical-pair-commutator-protection"
+keywords:
+  - radical-pair mechanism
+  - quantum magnetoreception
+  - spin chemistry
+  - open quantum systems
+  - Haberkorn master equation
+  - Feshbach-Schur perturbation theory
+  - auxiliary density operators
+  - Lean 4 formal verification

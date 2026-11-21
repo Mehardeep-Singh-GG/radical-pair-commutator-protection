@@ -1,0 +1,223 @@
+{
+  "runtime_sec": 437.11,
+  "dipolar_protection": {
+    "canonical_8x8_nondiag_dipolar": {
+      "theta_deg": 90.0,
+      "phi_rad": 0.4,
+      "comm_Hdip_PS_norm": 0.0,
+      "M2_with_dipolar": 3.27125,
+      "M2_exact_pred": 3.2712499999999998,
+      "M2_rel_err": 1.3575520362248762e-16,
+      "M2_angle_diff": 0.0,
+      "M4_0_without_dipolar": 22.723121874999997,
+      "M4_0_with_dipolar": 23.5729375,
+      "dM4_with_dipolar": 6.041044383171677,
+      "dM4_exact_pred": 6.0410443831716805,
+      "dM4_rel_err": 5.880959406120517e-16
+    },
+    "fad_36x36_50uT_tilted_dipolar": {
+      "d_dip_rad_per_us": 50.0,
+      "D_ZFS_rad_per_us": -75.0,
+      "r_nm": 1.870043561378594,
+      "tilt_deg": 35.0,
+      "comm_Hdip_PS_norm": 0.0,
+      "M2_with_dipolar": 35874.37424472452,
+      "M2_rel_err": 0.0,
+      "M2_angle_diff": 0.0,
+      "M4_0_without_dipolar": 4577235904.074614,
+      "M4_0_with_dipolar": 4644640231.552611,
+      "dM4_with_dipolar": 2762182.2812929153,
+      "dM4_exact_pred": 2762182.2812927505,
+      "dM4_rel_err": 5.96789345957971e-14,
+      "coherent_dPhi_no_dip": 0.20729074695749322,
+      "coherent_dPhi_with_dip": -0.007672532333730386,
+      "global_markov_dPhi_with_dip": {
+        "10000": -2.7449053498542424e-14,
+        "100000": -2.7618845729320245e-19,
+        "1000000": -2.7621668742340987e-24
+      },
+      "global_markov_slope_1e4_1e6_with_dip": 4.998638730520877,
+      "asymptotic_ratio_at_1e6": 0.9999944221426819
+    }
+  },
+  "fad_50uT_colored_bath": {
+    "model": "36x36 FAD.- physical 50 uT (14N5 + 14N10)",
+    "omega_L_rad_per_us": 8.80429815,
+    "coherent_Phi_S_0": 0.5422155253079146,
+    "coherent_Phi_S_90": 0.3349247783504214,
+    "coherent_signed_anisotropy": 0.20729074695749322,
+    "sigma_rad_per_us": 5.0,
+    "prony_tau_int_over_tau_c": 138.3986119126406,
+    "sweep": [
+      {
+        "tau_c_us": 0.001,
+        "sigma_rad_per_us": 5.0,
+        "tau_int_us": 0.1383986119126406,
+        "gamma_eff_per_us": 6.919930595632031,
+        "markov_iso_S1": {
+          "Phi_S_0": 0.2876560488945487,
+          "Phi_S_90": 0.2724861209185734,
+          "signed_anisotropy": 0.015169927975975293,
+          "signed_str_mp": "0.0151699279759752929"
+        },
+        "powerlaw_mu0.50_ou_mc": {
+          "n_traj": 200,
+          "dt": 0.001,
+          "T_max": 12.0,
+          "Phi_S_0": 0.4907198157391487,
+          "Phi_S_90": 0.2961148086141504,
+          "signed_anisotropy": 0.19460500712499823,
+          "signed_anisotropy_se": 0.0014066535500409103
+        },
+        "single_mode_ou1_matched": {
+          "n_traj": 200,
+          "dt": 0.001,
+          "T_max": 12.0,
+          "Phi_S_0": 0.47798089260405907,
+          "Phi_S_90": 0.27366728763188175,
+          "signed_anisotropy": 0.20431360497217724,
+          "signed_anisotropy_se": 0.0010433153495590204
+        },
+        "ratio_pl_over_ou1": 0.952481882699387,
+        "ratio_pl_over_markov": 12.828340874999233
+      },
+      {
+        "tau_c_us": 0.01,
+        "sigma_rad_per_us": 5.0,
+        "tau_int_us": 1.383986119126406,
+        "gamma_eff_per_us": 69.1993059563203,
+        "markov_iso_S1": {
+          "Phi_S_0": 0.2550869417633034,
+          "Phi_S_90": 0.25501233546361973,
+          "signed_anisotropy": 7.46062996836422e-05,
+          "signed_str_mp": "0.0000746062996836421968"
+        },
+        "powerlaw_mu0.50_ou_mc": {
+          "n_traj": 200,
+          "dt": 0.001,
+          "T_max": 12.0,
+          "Phi_S_0": 0.47725568266656987,
+          "Phi_S_90": 0.27962414902738425,
+          "signed_anisotropy": 0.19763153363918562,
+          "signed_anisotropy_se": 0.0011276264420270658
+        },
+        "single_mode_ou1_matched": {
+          "n_traj": 200,
+          "dt": 0.001,
+          "T_max": 12.0,
+          "Phi_S_0": 0.4812862435574515,
+          "Phi_S_90": 0.27338567013876597,
+          "signed_anisotropy": 0.20790057341868548,
+          "signed_anisotropy_se": 0.001039107889618153
+        },
+        "ratio_pl_over_ou1": 0.9506060055023546,
+        "ratio_pl_over_markov": 2648.9925713674997
+      },
+      {
+        "tau_c_us": 0.1,
+        "sigma_rad_per_us": 5.0,
+        "tau_int_us": 13.839861191264061,
+        "gamma_eff_per_us": 691.993059563203,
+        "markov_iso_S1": {
+          "Phi_S_0": 0.2509969367821044,
+          "Phi_S_90": 0.25099693749295854,
+          "signed_anisotropy": -7.108541310533933e-10,
+          "signed_str_mp": "-7.10854131053393314e-10"
+        },
+        "powerlaw_mu0.50_ou_mc": {
+          "n_traj": 200,
+          "dt": 0.001,
+          "T_max": 12.0,
+          "Phi_S_0": 0.47876765873365895,
+          "Phi_S_90": 0.274372316625878,
+          "signed_anisotropy": 0.20439534210778093,
+          "signed_anisotropy_se": 0.0010586484702176633
+        },
+        "single_mode_ou1_matched": {
+          "n_traj": 200,
+          "dt": 0.001,
+          "T_max": 12.0,
+          "Phi_S_0": 0.4844395483844397,
+          "Phi_S_90": 0.27692588363367976,
+          "signed_anisotropy": 0.20751366475075997,
+          "signed_anisotropy_se": 0.001044946414351928
+        },
+        "ratio_pl_over_ou1": 0.9849729286660501,
+        "ratio_pl_over_markov": 287534858.6705034
+      },
+      {
+        "tau_c_us": 1.0,
+        "sigma_rad_per_us": 5.0,
+        "tau_int_us": 138.3986119126406,
+        "gamma_eff_per_us": 6919.93059563203,
+        "markov_iso_S1": {
+          "Phi_S_0": 0.25010825915006973,
+          "Phi_S_90": 0.2501082594355552,
+          "signed_anisotropy": -2.854854395563332e-10,
+          "signed_str_mp": "-2.85485439556333241e-10"
+        },
+        "powerlaw_mu0.50_ou_mc": {
+          "n_traj": 200,
+          "dt": 0.001,
+          "T_max": 12.0,
+          "Phi_S_0": 0.4818288611088105,
+          "Phi_S_90": 0.2763954572225906,
+          "signed_anisotropy": 0.20543340388621986,
+          "signed_anisotropy_se": 0.0010161100407750892
+        },
+        "single_mode_ou1_matched": {
+          "n_traj": 200,
+          "dt": 0.001,
+          "T_max": 12.0,
+          "Phi_S_0": 0.4858253781746062,
+          "Phi_S_90": 0.2793036315250614,
+          "signed_anisotropy": 0.20652174664954479,
+          "signed_anisotropy_se": 0.0010889298358688884
+        },
+        "ratio_pl_over_ou1": 0.9947301299694518,
+        "ratio_pl_over_markov": 719593280.1528494
+      },
+      {
+        "tau_c_us": 10.0,
+        "sigma_rad_per_us": 5.0,
+        "tau_int_us": 1383.986119126406,
+        "gamma_eff_per_us": 69199.3059563203,
+        "markov_iso_S1": {
+          "Phi_S_0": 0.25001083799412077,
+          "Phi_S_90": 0.250010837994237,
+          "signed_anisotropy": -1.1626240746462396e-13,
+          "signed_str_mp": "-1.16262407464623947e-13"
+        },
+        "powerlaw_mu0.50_ou_mc": {
+          "n_traj": 200,
+          "dt": 0.001,
+          "T_max": 12.0,
+          "Phi_S_0": 0.4870257102390083,
+          "Phi_S_90": 0.27965548949693986,
+          "signed_anisotropy": 0.20737022074206846,
+          "signed_anisotropy_se": 0.0011112676371849788
+        },
+        "single_mode_ou1_matched": {
+          "n_traj": 200,
+          "dt": 0.001,
+          "T_max": 12.0,
+          "Phi_S_0": 0.48551322127042384,
+          "Phi_S_90": 0.2784764787491137,
+          "signed_anisotropy": 0.20703674252131016,
+          "signed_anisotropy_se": 0.0009659981126409952
+        },
+        "ratio_pl_over_ou1": 1.0016107199944182,
+        "ratio_pl_over_markov": 1783639486436.4612
+      }
+    ],
+    "dt_convergence_check_tc0.001_dt0.0005": {
+      "n_traj": 200,
+      "dt": 0.0005,
+      "T_max": 12.0,
+      "Phi_S_0": 0.4892648227986187,
+      "Phi_S_90": 0.294850315097446,
+      "signed_anisotropy": 0.19441450770117266,
+      "signed_anisotropy_se": 0.0013195351291974916
+    }
+  }
+}

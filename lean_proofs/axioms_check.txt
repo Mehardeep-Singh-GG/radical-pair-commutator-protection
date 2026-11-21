@@ -1,0 +1,44 @@
+Lean 4.16.0 Kernel Axiom Audit (pure Init, zero Mathlib)
+Paper1_RadicalPair.lean (5991 lines)
+
+P1_AUTHORED_PUBLIC_THEOREMS=364
+P1_AUTHORED_TOTAL_THEOREMS=501
+P1_PUBLIC_THEOREMS=560
+P1_KERNEL_TOTAL_THEOREMS=723
+DISALLOWED_AXIOMS=0
+# Paper 1 Headline Theorems (35 key formal theorems)
+KEY: DiamondProofs.Paper1.PS4_idem : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.PT4_idem : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.PS4_add_PT4 : [propext, Quot.sound]
+KEY: DiamondProofs.Paper1.comm_Z4_PS4 : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.comm_Hex4_PS4 : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.comm_SymDip4_PS4 : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.SymDip4_eq_half_sum : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.v4_orthog_Hex4 : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.v4_orthog_SymDip4 : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.M0_exact : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.M0_norm_one : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.M2_8_canonical : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.M4_8_axial_diff : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.M4_8_canonical_90deg : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.M4_12_axial_diff : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.MultiRP.M0_multi : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.MultiRP.comm_H_dip_PS_multi : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.MultiRP.comm_H_RP_PS_multi_gen_dip : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.MultiRP.H_dip_eq_sym : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.MultiRP.C2_Z_orthog_int_multi_gen_dip : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.MultiRP.M2_multi_gen_dip : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.MultiRP.M4_multi_diff_gen : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.MultiRP.M4_multi_diff_gen_dip : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.MultiRP.FAD_36x36_twoN14_M4_axial_diff : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.MultiRP.FAD_36x36_twoN14_dipolar_M4_diff : [propext, Quot.sound, Classical.choice]
+KEY: DiamondProofs.Paper1.laplacePS_expansion : [propext, Quot.sound]
+KEY: DiamondProofs.Paper1.laplaceRem_bounds : [propext, Quot.sound]
+KEY: DiamondProofs.Paper1.markov_xi5_envelope : [propext, Quot.sound]
+KEY: DiamondProofs.Paper1.markov_sign_flip_guarantee : [propext, Quot.sound]
+KEY: DiamondProofs.Paper1.sign_flip_blind_spot_witness : [propext, Quot.sound]
+KEY: DiamondProofs.Paper1.ml_half_vs_markov_xi9_2 : [propext, Quot.sound]
+KEY: DiamondProofs.Paper1.std_zeno_two_sided_xi2 : [propext, Quot.sound]
+KEY: DiamondProofs.Paper1.local_iso_dark_xi4 : [propext, Quot.sound]
+KEY: DiamondProofs.Paper1.local_z_leak_xi1 : [propext, Quot.sound]
+KEY: DiamondProofs.Paper1.local_z_single_sat_xi0 : [propext, Quot.sound]
