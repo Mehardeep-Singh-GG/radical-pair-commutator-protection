@@ -95,7 +95,7 @@ radical-pair-commutator-protection/
 The formalization in [`lean_proofs/DiamondProofs/Paper1_RadicalPair.lean`](lean_proofs/DiamondProofs/Paper1_RadicalPair.lean) is **100% self-contained on Lean 4.16.0 `Init`** — zero Mathlib imports, zero `sorry`/`admit`, zero custom axioms, and zero `native_decide`/`Lean.ofReduceBool`:
 
 - **Size & Scope:** 5,991 lines | **364** explicitly authored public theorems (**501** authored total including 137 private helpers) | **560** public kernel `thmInfo` declarations | **69** headline main-section theorems across four verified blocks (`UnifiedRP` [28], `SymDip4` [3], `MultiRP` [23], `StrongNoiseAsymptotics4C` [15]).
-- **Axiom Purity:** Audited via `Lean.collectAxioms` in [`lean_proofs/axioms_check.txt`](lean_proofs/axioms_check.txt) — `DISALLOWED_AXIOMS = 0` (strictly subsets of Lean's foundational `propext`, `Quot.sound`, `Classical.choice`).
+- **Axiom Purity & Kernel Replay:** Audited via `Lean.collectAxioms` in [`lean_proofs/axioms_check.txt`](lean_proofs/axioms_check.txt) — `DISALLOWED_AXIOMS = 0` (strictly subsets of Lean's foundational `propext`, `Quot.sound`, `Classical.choice`) — and replayed from an empty environment in GitHub Actions CI via `lean4checker -v --fresh` (v4.16.0) to rule out environment tampering.
 
 ### Quick Verification
 ```bash
